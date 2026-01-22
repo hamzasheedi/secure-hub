@@ -1,6 +1,6 @@
 # SecureVault
 
-SecureVault is a command-line file encryption and decryption system that provides secure file storage with user management and audit logging capabilities.
+SecureVault is a modular, secure, and user-friendly file encryption and decryption system designed to protect sensitive data while providing a seamless user experience across platforms.
 
 ## Features
 
@@ -13,36 +13,73 @@ SecureVault is a command-line file encryption and decryption system that provide
 
 ## Prerequisites
 
-- Python 3.6+
+- Python 3.11+
+- Node.js 18+
+- PostgreSQL 12+
 - `cryptography` library
 
 ## Installation
 
-1. Clone the repository:
-```bash
-git clone <repository-url>
-```
+### Backend Setup
+
+1. Navigate to the backend directory:
+   ```bash
+   cd backend
+   ```
+
+2. Create a virtual environment:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
+
+3. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. Set up environment variables:
+   ```bash
+   cp .env.example .env
+   # Edit .env with your configuration
+   ```
+
+5. Run database migrations:
+   ```bash
+   alembic upgrade head
+   ```
+
+6. Start the backend server:
+   ```bash
+   uvicorn src.main:app --reload
+   ```
+
+### Frontend Setup
+
+1. Navigate to the frontend directory:
+   ```bash
+   cd frontend
+   ```
 
 2. Install dependencies:
-```bash
-pip install cryptography
-```
+   ```bash
+   npm install
+   ```
 
-## Setup
+3. Set up environment variables:
+   ```bash
+   cp .env.example .env.local
+   # Edit .env.local with your configuration
+   ```
 
-1. Create an admin account:
-```bash
-python create_admin.py
-```
-
-2. Run the application:
-```bash
-python main.py
-```
+4. Start the development server:
+   ```bash
+   npm run dev
+   ```
 
 ## Usage
 
-The application provides a menu-driven interface:
+The application provides a web-based interface for:
 
 1. **Register New User**: Create a new user account with password validation
 2. **Login to Account**: Access your personal vault
@@ -63,30 +100,14 @@ Once logged in, users can:
 - **Audit Logs**: Chain-hashed logs to detect tampering
 - **Secure Deletion**: Overwrites files with random data before deletion
 
-## Project Structure
+## Architecture
 
-```
-├── main.py                 # Main application entry point
-├── create_admin.py         # Script to create admin accounts
-├── secure_data.json        # User credentials storage
-├── modules/                # Application modules
-│   ├── __init__.py
-│   ├── constant_log.py     # Chain-hashed audit logging
-│   ├── encryption_manager.py # Cryptographic operations
-│   ├── file_vault_manager.py # File vault operations
-│   ├── password_analyzer.py # Password strength analysis
-│   ├── password_hasher.py  # User authentication
-├── SecureVault_Data/       # Application data storage
-│   ├── secure_data.json    # User credentials
-│   ├── backup/
-│   ├── encrypted/
-│   └── logs/
-└── vaults/                 # Individual user vaults
-    └── {username}/
-        ├── encrypted/
-        ├── decrypted/
-        └── backup/
-```
+SecureVault follows a modern, API-first, layered architecture:
+
+- **Frontend Layer**: Web-based UI using Next.js
+- **API & Backend Layer**: FastAPI backend with authentication and business logic
+- **Core Security & Vault Services**: Encryption, user management, and audit services
+- **Data & Storage Layer**: PostgreSQL for metadata, filesystem for encrypted files
 
 ## Contributing
 
