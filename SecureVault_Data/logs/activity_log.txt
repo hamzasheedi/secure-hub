@@ -1,0 +1,4 @@
+{"timestamp": "2025-11-19 08:11:49", "user": "test user", "action": "encrypt", "file": "test2.txt.txt", "deleted_original": false, "success": true}
+{"timestamp": "2025-11-19 08:13:08", "user": "test user", "action": "decrypt", "file": "test2.txt.txt.enc", "deleted_original": false, "success": true}
+{"timestamp": "2026-01-08 17:58:24", "user": "aman", "action": "encrypt", "file": "aman ka raz.docx", "deleted_original": false, "success": true}
+{"timestamp": "2026-01-08 18:00:25", "user": "aman", "action": "decrypt", "file": "aman ka raz.docx.enc", "deleted_original": false, "success": true}

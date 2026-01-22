@@ -1,0 +1,12 @@
+# Data files - do not commit user data
+*.json
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*~
