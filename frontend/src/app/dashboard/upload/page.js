@@ -204,7 +204,7 @@ export default function UploadPage() {
             {files.map((fileObj) => (
               <div key={fileObj.id} className="flex flex-col sm:flex-row items-center justify-between p-4 bg-white/10 backdrop-blur-sm rounded-2xl border border-white/30 hover-lift gap-4">
                 <div className="flex items-center w-full sm:w-auto">
-                  <div className="mr-4">
+                  <div className="mr-3 sm:mr-4">
                     {fileObj.type.startsWith('image/') ? (
                       <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center">
                         <span className="text-white text-lg sm:text-xl">🖼️</span>
@@ -219,13 +219,13 @@ export default function UploadPage() {
                       </div>
                     )}
                   </div>
-                  <div className="truncate">
-                    <p className="font-bold text-white truncate max-w-[150px] sm:max-w-xs">{fileObj.name}</p>
-                    <p className="text-sm text-white/80">{(fileObj.size / 1024 / 1024).toFixed(2)} MB</p>
+                  <div className="truncate w-full">
+                    <p className="font-bold text-white truncate max-w-[100px] sm:max-w-xs">{fileObj.name}</p>
+                    <p className="text-xs sm:text-sm text-white/80">{(fileObj.size / 1024 / 1024).toFixed(2)} MB</p>
                   </div>
                 </div>
 
-                <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-3 w-full sm:w-auto">
+                <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2 sm:space-x-3 w-full sm:w-auto">
                   {uploadProgress[fileObj.id] > 0 && uploadProgress[fileObj.id] < 100 && (
                     <div className="w-full sm:w-32">
                       <div className="w-full bg-white/30 rounded-full h-2.5">
@@ -242,13 +242,13 @@ export default function UploadPage() {
                     <>
                       <button
                         onClick={() => handleFileUpload(fileObj.id)}
-                        className="btn-primary text-sm sm:text-base font-bold px-4 py-2 sm:px-6 sm:py-2.5 hover-lift w-full sm:w-auto"
+                        className="btn-primary text-sm sm:text-base font-bold px-3 py-2 sm:px-6 sm:py-2.5 hover-lift w-full sm:w-auto"
                       >
                         Encrypt 🔐
                       </button>
                       <button
                         onClick={() => removeFile(fileObj.id)}
-                        className="btn-secondary text-sm sm:text-base font-bold px-4 py-2 sm:px-6 sm:py-2.5 hover-lift w-full sm:w-auto"
+                        className="btn-secondary text-sm sm:text-base font-bold px-3 py-2 sm:px-6 sm:py-2.5 hover-lift w-full sm:w-auto"
                       >
                         Remove 🗑️
                       </button>
@@ -256,7 +256,7 @@ export default function UploadPage() {
                   ) : uploading[fileObj.id] ? (
                     <button
                       disabled
-                      className="btn-primary text-sm sm:text-base font-bold px-4 py-2 sm:px-6 sm:py-2.5 opacity-70 w-full sm:w-auto"
+                      className="btn-primary text-sm sm:text-base font-bold px-3 py-2 sm:px-6 sm:py-2.5 opacity-70 w-full sm:w-auto"
                     >
                       Encrypting... 🔓
                     </button>

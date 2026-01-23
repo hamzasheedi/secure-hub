@@ -45,23 +45,23 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#2c184a] to-[#1a0f3d] flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-4xl font-extrabold text-white">
+    <div className="min-h-screen bg-gradient-to-br from-[#2c184a] to-[#1a0f3d] flex flex-col justify-center py-6 px-4">
+      <div className="w-full max-w-md mx-auto">
+        <h2 className="mt-6 text-center text-3xl sm:text-4xl font-extrabold text-white">
           SecureVault 🔐
         </h2>
-        <p className="mt-2 text-center text-lg text-white/95">
+        <p className="mt-2 text-center text-base sm:text-lg text-white/95">
           A secure file encryption and decryption system
         </p>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-[#1a0f3d]/30 backdrop-blur-lg py-8 px-4 shadow-xl sm:rounded-2xl sm:px-10 border border-white/20">
+      <div className="mt-6 w-full max-w-md mx-auto">
+        <div className="bg-[#1a0f3d]/30 backdrop-blur-lg py-6 px-4 sm:px-6 shadow-xl rounded-2xl border border-white/20">
           {/* Tab Navigation */}
-          <div className="flex justify-between mb-6">
+          <div className="flex flex-col sm:flex-row justify-between mb-4 sm:mb-6 gap-2">
             <button
               onClick={() => setActiveTab('login')}
-              className={`flex-1 py-3 px-4 rounded-t-xl font-bold ${
+              className={`flex-1 py-3 px-3 rounded-t-xl sm:rounded-t-xl font-bold text-sm sm:text-base ${
                 activeTab === 'login'
                   ? 'bg-gradient-to-r from-[#ff6b81] to-[#6b5bff] text-white shadow-lg'
                   : 'bg-white/10 text-white/80 hover:bg-white/20'
@@ -71,7 +71,7 @@ export default function HomePage() {
             </button>
             <button
               onClick={() => setActiveTab('register')}
-              className={`flex-1 py-3 px-4 rounded-t-xl font-bold ${
+              className={`flex-1 py-3 px-3 rounded-b-xl sm:rounded-t-xl font-bold text-sm sm:text-base ${
                 activeTab === 'register'
                   ? 'bg-gradient-to-r from-[#ff6b81] to-[#6b5bff] text-white shadow-lg'
                   : 'bg-white/10 text-white/80 hover:bg-white/20'
@@ -82,7 +82,7 @@ export default function HomePage() {
           </div>
 
           {/* Tab Content */}
-          <div className="mt-4">
+          <div className="mt-2 sm:mt-4">
             {activeTab === 'login' && <LoginForm />}
             {activeTab === 'register' && <RegisterForm />}
           </div>

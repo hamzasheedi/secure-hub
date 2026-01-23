@@ -360,15 +360,15 @@ export default function DecryptLocalFile() {
       )}
 
       {decryptedBlob && (
-        <div className="mt-6 p-6 bg-gradient-to-br from-green-500/20 to-emerald-500/20 rounded-2xl border border-green-500/30 backdrop-blur-sm">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xl font-bold text-white drop-shadow-md">Decryption Successful! 🎉</h3>
-            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-md">
+        <div className="mt-6 p-4 sm:p-6 bg-gradient-to-br from-green-500/20 to-emerald-500/20 rounded-2xl border border-green-500/30 backdrop-blur-sm">
+          <div className="flex flex-col sm:flex-row items-center justify-between mb-4 gap-2">
+            <h3 className="text-lg sm:text-xl font-bold text-white drop-shadow-md">Decryption Successful! 🎉</h3>
+            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs sm:text-sm font-bold bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-md">
               ✅ Decrypted
             </span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-3 sm:gap-4">
             <button
               onClick={handlePreview}
               className="flex items-center justify-center py-3 px-4 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-xl font-bold hover:shadow-lg transition-all duration-300 hover-lift"

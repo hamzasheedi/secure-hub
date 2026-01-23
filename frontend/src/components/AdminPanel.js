@@ -116,23 +116,23 @@ export default function AdminPanel() {
             <p className="text-gray-400">There are currently no users in the system</p>
           </div>
         ) : (
-          <div className="overflow-hidden border border-white/30 rounded-xl">
+          <div className="overflow-x-auto border border-white/30 rounded-xl sm:rounded-xl">
             <table className="min-w-full divide-y divide-white/30">
               <thead className="bg-white/10 backdrop-blur-sm">
                 <tr>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-bold text-white/95 uppercase tracking-wider drop-shadow-sm">
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-bold text-white/95 uppercase tracking-wider drop-shadow-sm sm:px-6">
                     User 👤
                   </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-bold text-white/95 uppercase tracking-wider drop-shadow-sm">
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-bold text-white/95 uppercase tracking-wider drop-shadow-sm sm:px-6">
                     Role 🏷️
                   </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-bold text-white/95 uppercase tracking-wider drop-shadow-sm">
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-bold text-white/95 uppercase tracking-wider drop-shadow-sm sm:px-6">
                     Status 📊
                   </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-bold text-white/95 uppercase tracking-wider drop-shadow-sm">
+                  <th scope="col" className="px-4 py-3 text-left text-xs font-bold text-white/95 uppercase tracking-wider drop-shadow-sm sm:px-6">
                     Created ⏰
                   </th>
-                  <th scope="col" className="px-6 py-3 text-right text-xs font-bold text-white/95 uppercase tracking-wider drop-shadow-sm">
+                  <th scope="col" className="px-4 py-3 text-right text-xs font-bold text-white/95 uppercase tracking-wider drop-shadow-sm sm:px-6">
                     Actions ⚙️
                   </th>
                 </tr>
@@ -140,20 +140,20 @@ export default function AdminPanel() {
               <tbody className="bg-white/10 backdrop-blur-sm divide-y divide-white/30">
                 {users.map((user) => (
                   <tr key={user.id} className="hover:bg-white/20 transition-colors duration-300 hover-lift">
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-4 py-4 whitespace-nowrap sm:px-6">
                       <div className="flex items-center">
-                        <div className="flex-shrink-0 h-12 w-12 flex items-center justify-center rounded-xl bg-white/10 backdrop-blur-sm">
-                          <span className="text-xl">👤</span>
+                        <div className="flex-shrink-0 h-10 w-10 sm:h-12 sm:w-12 flex items-center justify-center rounded-xl bg-white/10 backdrop-blur-sm">
+                          <span className="text-lg sm:text-xl">👤</span>
                         </div>
-                        <div className="ml-4">
+                        <div className="ml-3 sm:ml-4">
                           <div className="text-sm font-bold text-white">
                             {user.username}
                           </div>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-white/95 font-medium drop-shadow-sm">
-                      <span className={`px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full ${
+                    <td className="px-4 py-4 whitespace-nowrap text-sm text-white/95 font-medium drop-shadow-sm sm:px-6">
+                      <span className={`px-2 py-1 inline-flex text-xs leading-5 font-bold rounded-full sm:px-3 sm:py-1 ${
                         user.role === 'admin'
                           ? 'bg-gradient-to-r from-purple-500 to-indigo-500 text-white shadow-md'
                           : 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-md'
@@ -161,8 +161,8 @@ export default function AdminPanel() {
                         {user.role}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-white/95 font-medium drop-shadow-sm">
-                      <span className={`px-3 py-1 inline-flex text-xs leading-5 font-bold rounded-full ${
+                    <td className="px-4 py-4 whitespace-nowrap text-sm text-white/95 font-medium drop-shadow-sm sm:px-6">
+                      <span className={`px-2 py-1 inline-flex text-xs leading-5 font-bold rounded-full sm:px-3 sm:py-1 ${
                         user.status === 'active'
                           ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-md'
                           : 'bg-gradient-to-r from-red-500 to-rose-500 text-white shadow-md'
@@ -170,18 +170,18 @@ export default function AdminPanel() {
                         {user.status === 'active' ? 'Active' : 'Inactive'}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-white/95 font-medium drop-shadow-sm">
+                    <td className="px-4 py-4 whitespace-nowrap text-sm text-white/95 font-medium drop-shadow-sm sm:px-6">
                       {new Date(user.created_at).toLocaleDateString()}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <div className="flex justify-end space-x-3">
+                    <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium sm:px-6">
+                      <div className="flex justify-end space-x-2 sm:space-x-3">
                         {user.role === 'admin' ? (
                           <button
                             onClick={() => handleDemote(user.id, user.username)}
                             className="text-yellow-400 hover:text-yellow-300 hover:scale-110 transition-transform duration-200"
                             title="Demote from Admin"
                           >
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 sm:h-6 sm:w-6" viewBox="0 0 20 20" fill="currentColor">
                               <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                             </svg>
                           </button>
@@ -191,7 +191,7 @@ export default function AdminPanel() {
                             className="text-purple-400 hover:text-purple-300 hover:scale-110 transition-transform duration-200"
                             title="Promote to Admin"
                           >
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 sm:h-6 sm:w-6" viewBox="0 0 20 20" fill="currentColor">
                               <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                             </svg>
                           </button>
@@ -200,20 +200,20 @@ export default function AdminPanel() {
                         {user.status === 'active' ? (
                           <button
                             onClick={() => handleDeactivate(user.id)}
-                            className="text-red-400 hover:text-red-300 hover:scale-110 transition-transform duration-200 ml-2"
+                            className="text-red-400 hover:text-red-300 hover:scale-110 transition-transform duration-200 ml-1 sm:ml-2"
                             title="Deactivate User"
                           >
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 sm:h-6 sm:w-6" viewBox="0 0 20 20" fill="currentColor">
                               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
                             </svg>
                           </button>
                         ) : (
                           <button
                             onClick={() => handleActivate(user.id)}
-                            className="text-green-400 hover:text-green-300 hover:scale-110 transition-transform duration-200 ml-2"
+                            className="text-green-400 hover:text-green-300 hover:scale-110 transition-transform duration-200 ml-1 sm:ml-2"
                             title="Activate User"
                           >
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 sm:h-6 sm:w-6" viewBox="0 0 20 20" fill="currentColor">
                               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                             </svg>
                           </button>
