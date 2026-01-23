@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: securevault-backend
+    env: python
+    region: frankfurt  # or your preferred region
+    plan: starter
+    runtime: python-3.12.12
+    buildCommand: "./render-build.sh"
+    startCommand: "gunicorn src.main:app -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT --workers 4 --worker-class uvicorn.workers.UvicornWorker --worker-connections 1000 --max-requests 1000 --max-requests-jitter 100 --timeout 30 --keep-alive 2 --preload"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.12
+      - key: DATABASE_URL
+        sync: false  # This will be set in the Render dashboard
+      - key: JWT_SECRET_KEY
+        sync: false  # This will be set in the Render dashboard
+      - key: ENCRYPTION_KEY
+        sync: false  # This will be set in the Render dashboard
+      - key: FRONTEND_URL
+        value: https://your-frontend-domain.onrender.com  # Update with your frontend URL
