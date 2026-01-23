@@ -250,22 +250,22 @@ export default function VaultDashboard() {
 
   return (
     <div className="w-full">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-white mb-2">Your Secure Vault</h1>
-        <p className="text-gray-400">Manage your encrypted files securely</p>
+      <div className="mb-6 sm:mb-8">
+        <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2">Your Secure Vault 🗂️</h1>
+        <p className="text-white/95 text-base sm:text-lg">Manage your encrypted files securely 🔐</p>
       </div>
 
 
       <DecryptLocalFile />
 
-      <div className="bg-card rounded-xl p-6 border border-gray-700">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-semibold text-white">Encrypted Files</h2>
+      <div className="bg-[#1a0f3d]/30 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-white/20 shadow-xl">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-6 gap-4">
+          <h2 className="text-xl sm:text-2xl font-bold text-white">Encrypted Files 📁</h2>
           <button
             onClick={() => router.push('/dashboard/upload')}
-            className="btn-primary px-4 py-2"
+            className="btn-primary px-4 py-2 sm:px-6 sm:py-3 font-bold text-sm sm:text-base hover-lift"
           >
-            + Upload File
+            + Upload File 📤
           </button>
         </div>
 
@@ -290,79 +290,79 @@ export default function VaultDashboard() {
             </button>
           </div>
         ) : (
-          <div className="overflow-hidden border border-gray-700 rounded-lg">
-            <table className="min-w-full divide-y divide-gray-700">
-              <thead className="bg-[#252536]">
+          <div className="overflow-hidden border border-white/30 rounded-xl">
+            <table className="min-w-full divide-y divide-white/30">
+              <thead className="bg-white/10 backdrop-blur-sm">
                 <tr>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                    Filename
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-bold text-white/95 uppercase tracking-wider drop-shadow-sm">
+                    Filename 📄
                   </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                    Size
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-bold text-white/95 uppercase tracking-wider drop-shadow-sm">
+                    Size 💾
                   </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                    Encrypted At
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-bold text-white/95 uppercase tracking-wider drop-shadow-sm">
+                    Encrypted At ⏰
                   </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                    Status
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-bold text-white/95 uppercase tracking-wider drop-shadow-sm">
+                    Status ✅
                   </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                    Actions - Original
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-bold text-white/95 uppercase tracking-wider drop-shadow-sm">
+                    Actions - Original 🔄
                   </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                    Actions - Encrypted
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-bold text-white/95 uppercase tracking-wider drop-shadow-sm">
+                    Actions - Encrypted 🔐
                   </th>
-                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">
-                    Delete
+                  <th scope="col" className="px-6 py-3 text-right text-xs font-bold text-white/95 uppercase tracking-wider drop-shadow-sm">
+                    Delete 🗑️
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-[#252536] divide-y divide-gray-700">
+              <tbody className="bg-white/10 backdrop-blur-sm divide-y divide-white/30">
                 {files.map((file) => (
-                  <tr key={file.file_id} className="hover:bg-[#2a2a3a] transition-colors duration-150">
+                  <tr key={file.file_id} className="hover:bg-white/20 transition-colors duration-300 hover-lift">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
-                        <div className="flex-shrink-0 h-10 w-10 flex items-center justify-center rounded-md bg-gray-800">
+                        <div className="flex-shrink-0 h-12 w-12 flex items-center justify-center rounded-xl bg-white/10 backdrop-blur-sm">
                           {file.original_name.toLowerCase().endsWith('.pdf') ? (
-                            <span className="text-red-400">📄</span>
+                            <span className="text-red-400 text-xl">📄</span>
                           ) : file.original_name.toLowerCase().endsWith('.jpg') ||
                                file.original_name.toLowerCase().endsWith('.jpeg') ||
                                file.original_name.toLowerCase().endsWith('.png') ? (
-                            <span className="text-blue-400">🖼️</span>
+                            <span className="text-blue-400 text-xl">🖼️</span>
                           ) : file.original_name.toLowerCase().endsWith('.txt') ? (
-                            <span className="text-green-400">📝</span>
+                            <span className="text-green-400 text-xl">📝</span>
                           ) : (
-                            <span className="text-gray-400">📁</span>
+                            <span className="text-gray-400 text-xl">📁</span>
                           )}
                         </div>
                         <div className="ml-4">
-                          <div className="text-sm font-medium text-white truncate max-w-xs">
+                          <div className="text-sm font-bold text-white truncate max-w-xs">
                             {file.original_name}
                           </div>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-white/95 font-medium drop-shadow-sm">
                       {formatFileSize(file.size)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-white/95 font-medium drop-shadow-sm">
                       {new Date(file.encrypted_at).toLocaleString()}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-900 text-green-100">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-white/95 font-medium drop-shadow-sm">
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-md">
                         ✅ Encrypted
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <div className="flex space-x-2">
+                      <div className="flex space-x-3">
                         <button
                           onClick={() => handleDownload(file.file_id, file.original_name)}
-                          className="text-green-400 hover:text-green-300"
+                          className="text-green-400 hover:text-green-300 hover:scale-110 transition-transform duration-200"
                           title="Decrypt & Download Original"
                           data-file-id={file.file_id}
                           data-action="download"
                         >
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
                             <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
                           </svg>
                         </button>
@@ -373,12 +373,12 @@ export default function VaultDashboard() {
                           file.original_name.toLowerCase().endsWith('.txt')) && (
                           <button
                             onClick={() => handlePreview(file.file_id, file.original_name)}
-                            className="text-blue-400 hover:text-blue-300"
+                            className="text-blue-400 hover:text-blue-300 hover:scale-110 transition-transform duration-200"
                             title="Preview Original"
                             data-file-id={file.file_id}
                             data-action="preview"
                           >
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
                               <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
                               <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
                             </svg>
@@ -387,15 +387,15 @@ export default function VaultDashboard() {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <div className="flex space-x-2">
+                      <div className="flex space-x-3">
                         <button
                           onClick={() => handleEncryptedDownload(file.file_id, file.original_name)}
-                          className="text-purple-400 hover:text-purple-300"
+                          className="text-purple-400 hover:text-purple-300 hover:scale-110 transition-transform duration-200"
                           title="Download Encrypted File"
                           data-file-id={file.file_id}
                           data-action="download-encrypted"
                         >
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
                             <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
                           </svg>
                         </button>
@@ -404,7 +404,7 @@ export default function VaultDashboard() {
                           title="Encrypted file preview not available"
                           disabled
                         >
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
                             <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
                             <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
                           </svg>
@@ -414,10 +414,10 @@ export default function VaultDashboard() {
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <button
                         onClick={() => handleDelete(file.file_id, file.original_name)}
-                        className="text-red-400 hover:text-red-300"
+                        className="text-red-400 hover:text-red-300 hover:scale-110 transition-transform duration-200"
                         title="Delete"
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
                           <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
                         </svg>
                       </button>

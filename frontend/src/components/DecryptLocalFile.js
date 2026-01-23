@@ -235,14 +235,14 @@ export default function DecryptLocalFile() {
   };
 
   return (
-    <div className="bg-card rounded-xl p-6 border border-gray-700 mb-8">
-      <div className="mb-6">
-        <h2 className="text-xl font-semibold text-white mb-2">Decrypt Local File</h2>
-        <p className="text-gray-400">Upload an encrypted file (.enc) to decrypt it locally</p>
+    <div className="bg-[#1a0f3d]/30 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-white/20 mb-8">
+      <div className="mb-4 sm:mb-6">
+        <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">Decrypt Local File 🔐</h2>
+        <p className="text-white/95 text-sm sm:text-base">Upload an encrypted file (.enc) to decrypt it locally 📁</p>
       </div>
 
       <div
-        className="mb-6 p-6 border-2 border-dashed border-gray-600 rounded-lg hover:border-[#6C63FF] transition-colors duration-200"
+        className="mb-6 p-6 border-2 border-dashed border-white/50 rounded-2xl hover:border-[#ff6b81] transition-colors duration-300 backdrop-blur-sm hover-lift"
         onDragOver={handleDragOver}
         onDragEnter={handleDragEnter}
         onDragLeave={handleDragLeave}
@@ -250,16 +250,16 @@ export default function DecryptLocalFile() {
       >
         <div className="text-center">
           <div
-            className="cursor-pointer hover:bg-[#2a2a3a] transition-colors duration-200 rounded-lg p-4"
+            className="cursor-pointer hover:bg-white/10 transition-colors duration-300 rounded-2xl p-6"
             onClick={() => fileInputRef.current?.click()}
           >
             <div className="flex flex-col items-center justify-center">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-gray-500 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-white/70 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
               </svg>
-              <p className="text-lg font-medium text-gray-300">Drag & drop encrypted file here</p>
-              <p className="text-gray-500 mt-1">or click to browse</p>
-              <p className="text-sm text-gray-600 mt-2">Supports: .enc files (Max 10MB)</p>
+              <p className="text-xl font-bold text-white">Drag & drop encrypted file here 📁</p>
+              <p className="text-white/70 mt-2">or click to browse</p>
+              <p className="text-white/50 mt-2">Supports: .enc files (Max 10MB) 📦</p>
             </div>
             <input
               type="file"
@@ -273,25 +273,25 @@ export default function DecryptLocalFile() {
       </div>
 
       {file && (
-        <div className="mb-6 p-4 bg-[#252536] rounded-lg border border-gray-700">
+        <div className="mb-6 p-4 bg-white/10 backdrop-blur-sm rounded-2xl border border-white/30">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <div className="mr-4">
-                <div className="w-10 h-10 bg-purple-900/30 rounded flex items-center justify-center">
-                  <span className="text-purple-400">🔒</span>
+                <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-xl flex items-center justify-center">
+                  <span className="text-white text-xl">🔒</span>
                 </div>
               </div>
               <div>
-                <p className="font-medium text-white truncate max-w-xs">{file.name}</p>
-                <p className="text-sm text-gray-400">{formatFileSize(file.size)}</p>
+                <p className="font-bold text-white truncate max-w-xs">{file.name}</p>
+                <p className="text-sm text-white/70">{formatFileSize(file.size)}</p>
               </div>
             </div>
             <button
               onClick={resetForm}
-              className="text-red-400 hover:text-red-300"
+              className="text-red-400 hover:text-red-300 hover:scale-110 transition-transform duration-200"
               title="Remove file"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
               </svg>
             </button>
@@ -301,15 +301,15 @@ export default function DecryptLocalFile() {
 
       {file && (
         <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-300 mb-2">
-            Password
+          <label className="block text-sm font-bold text-white/95 mb-2 drop-shadow-sm">
+            Password 🔐
           </label>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="Enter the password used for encryption"
-            className="w-full px-4 py-2 bg-[#252536] border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6C63FF] text-white"
+            placeholder="Enter the password used for encryption..."
+            className="w-full px-4 py-3 bg-white/20 border border-white/40 rounded-xl text-white placeholder-white/80 focus:outline-none focus:ring-2 focus:ring-[#ff6b81] focus:border-transparent transition-all duration-300 backdrop-blur-sm"
           />
         </div>
       )}
@@ -327,67 +327,67 @@ export default function DecryptLocalFile() {
       )}
 
       {file && (
-        <div className="flex space-x-4 mb-6">
+        <div className="flex flex-col sm:flex-row gap-4 mb-6">
           <button
             onClick={handleDecrypt}
             disabled={decrypting || !password}
-            className={`flex-1 py-2 px-4 rounded-lg font-medium transition-colors duration-200 ${
+            className={`flex-1 py-3 px-6 rounded-xl font-bold transition-all duration-300 hover-lift ${
               decrypting || !password
                 ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
-                : 'bg-[#6C63FF] text-white hover:bg-[#5a52e0]'
+                : 'bg-gradient-to-r from-[#ff6b81] to-[#6b5bff] text-white shadow-lg hover:shadow-xl'
             }`}
           >
             {decrypting ? (
               <span className="flex items-center justify-center">
-                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                Decrypting...
+                Decrypting... 🔓
               </span>
             ) : (
-              'Decrypt File'
+              'Decrypt File 🔐'
             )}
           </button>
-          
+
           <button
             onClick={resetForm}
-            className="py-2 px-4 bg-gray-700 text-white rounded-lg font-medium hover:bg-gray-600 transition-colors duration-200"
+            className="py-3 px-6 bg-gradient-to-r from-[#ffcc00] to-[#00ffe0] text-gray-900 rounded-xl font-bold hover:shadow-lg transition-all duration-300 hover-lift"
           >
-            Reset
+            Reset 🔄
           </button>
         </div>
       )}
 
       {decryptedBlob && (
-        <div className="mt-6 p-4 bg-[#252536] rounded-lg border border-gray-700">
+        <div className="mt-6 p-6 bg-gradient-to-br from-green-500/20 to-emerald-500/20 rounded-2xl border border-green-500/30 backdrop-blur-sm">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-medium text-white">Decryption Successful!</h3>
-            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-900 text-green-100">
+            <h3 className="text-xl font-bold text-white drop-shadow-md">Decryption Successful! 🎉</h3>
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-md">
               ✅ Decrypted
             </span>
           </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <button
               onClick={handlePreview}
-              className="flex items-center justify-center py-2 px-4 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-500 transition-colors duration-200"
+              className="flex items-center justify-center py-3 px-4 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-xl font-bold hover:shadow-lg transition-all duration-300 hover-lift"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                 <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
                 <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
               </svg>
-              Preview File
+              Preview File 👀
             </button>
-            
+
             <button
               onClick={handleDownload}
-              className="flex items-center justify-center py-2 px-4 bg-green-600 text-white rounded-lg font-medium hover:bg-green-500 transition-colors duration-200"
+              className="flex items-center justify-center py-3 px-4 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl font-bold hover:shadow-lg transition-all duration-300 hover-lift"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
               </svg>
-              Download Original
+              Download Original 📥
             </button>
           </div>
         </div>

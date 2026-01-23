@@ -17,7 +17,7 @@
 
 body {
   color: var(--text-main);
-  background: linear-gradient(135deg, var(--primary), var(--secondary)) fixed;
+  background: linear-gradient(135deg, #2c184a, #1a0f3d) fixed;
   font-family: 'Poppins', sans-serif;
 }
 
@@ -72,4 +72,5 @@ body {
   .gradient-text {
     @apply bg-clip-text text-transparent bg-gradient-to-r from-[#ff6b81] to-[#6b5bff];
   }
+
 }

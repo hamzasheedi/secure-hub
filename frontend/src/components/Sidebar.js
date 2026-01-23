@@ -20,9 +20,9 @@ export default function Sidebar() {
   }
 
   return (
-    <div className="fixed inset-y-0 z-50 w-64 bg-[#2C2C3E] border-r border-gray-700">
-      <div className="flex items-center justify-center h-16 border-b border-gray-700">
-        <h1 className="text-xl font-bold text-white">SecureVault</h1>
+    <div className="fixed inset-y-0 z-50 w-64 bg-[#1a0f3d]/50 backdrop-blur-lg border-r border-white/30">
+      <div className="flex items-center justify-center h-16 border-b border-white/30">
+        <h1 className="text-xl sm:text-2xl font-bold text-white">SecureVault 🔐</h1>
       </div>
       <nav className="mt-5 px-2">
         <div className="space-y-1">
@@ -32,12 +32,12 @@ export default function Sidebar() {
               href={item.href}
               className={`${
                 pathname === item.href
-                  ? 'bg-gray-800 text-white'
-                  : 'text-gray-300 hover:bg-gray-700 hover:text-white'
-              } group flex items-center px-4 py-3 text-base font-medium rounded-md transition-colors duration-200`}
+                  ? 'bg-gradient-to-r from-[#ff6b81] to-[#6b5bff] text-white shadow-lg'
+                  : 'text-white/90 hover:bg-white/20 hover:text-white'
+              } group flex items-center px-4 py-3 text-sm sm:text-base font-bold rounded-xl transition-all duration-300 hover-lift`}
             >
-              <span className="mr-3">{item.icon}</span>
-              {item.name}
+              <span className="mr-3 text-lg">{item.icon}</span>
+              <span>{item.name}</span>
             </Link>
           ))}
         </div>

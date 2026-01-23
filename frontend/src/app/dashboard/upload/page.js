@@ -157,34 +157,34 @@ export default function UploadPage() {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-white mb-2">Upload & Encrypt Files</h1>
-        <p className="text-gray-400">Select files to encrypt and store in your secure vault</p>
+      <div className="mb-6 sm:mb-8">
+        <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2">Upload & Encrypt Files 📤</h1>
+        <p className="text-white/95 text-base sm:text-lg">Select files to encrypt and store in your secure vault 🔐</p>
       </div>
 
 
       <div
-        className="bg-card rounded-xl p-6 mb-8 border-2 border-dashed border-gray-600 hover:border-[#6C63FF] transition-colors duration-200"
+        className="bg-[#1a0f3d]/30 backdrop-blur-sm rounded-2xl p-4 sm:p-6 mb-8 border-2 border-dashed border-white/50 hover:border-[#ff6b81] transition-colors duration-300 hover-lift"
         onDragOver={handleDragOver}
         onDragEnter={handleDragEnter}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
       >
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-300 mb-2">
-            Select Files
+        <div className="mb-4 sm:mb-6">
+          <label className="block text-sm font-bold text-white/95 mb-2">
+            Select Files 📁
           </label>
           <div
-            className="p-8 text-center cursor-pointer hover:bg-[#2a2a3a] transition-colors duration-200 rounded-lg"
+            className="p-6 sm:p-8 text-center cursor-pointer hover:bg-white/20 transition-colors duration-300 rounded-2xl"
             onClick={() => fileInputRef.current?.click()}
           >
             <div className="flex flex-col items-center justify-center">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-gray-500 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-12 sm:h-16 w-12 sm:w-16 text-white/80 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
               </svg>
-              <p className="text-lg font-medium text-gray-300">Drag & drop files here</p>
-              <p className="text-gray-500 mt-1">or click to browse</p>
-              <p className="text-sm text-gray-600 mt-2">Supports: JPEG, PNG, PDF, ZIP, TXT (Max 10MB each)</p>
+              <p className="text-lg sm:text-xl font-bold text-white">Drag & drop files here</p>
+              <p className="text-white/80 mt-2">or click to browse</p>
+              <p className="text-white/70 mt-2 text-sm sm:text-base">Supports: JPEG, PNG, PDF, ZIP, TXT (Max 10MB each) 📦</p>
             </div>
             <input
               type="file"
@@ -198,43 +198,43 @@ export default function UploadPage() {
       </div>
 
       {files.length > 0 && (
-        <div className="bg-card rounded-xl p-6 border border-gray-700">
-          <h2 className="text-xl font-semibold text-white mb-4">Selected Files</h2>
+        <div className="bg-[#1a0f3d]/30 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-white/20 shadow-xl">
+          <h2 className="text-xl sm:text-2xl font-bold text-white mb-4">Selected Files 📁</h2>
           <div className="space-y-4">
             {files.map((fileObj) => (
-              <div key={fileObj.id} className="flex items-center justify-between p-4 bg-[#252536] rounded-lg border border-gray-700">
-                <div className="flex items-center">
+              <div key={fileObj.id} className="flex flex-col sm:flex-row items-center justify-between p-4 bg-white/10 backdrop-blur-sm rounded-2xl border border-white/30 hover-lift gap-4">
+                <div className="flex items-center w-full sm:w-auto">
                   <div className="mr-4">
                     {fileObj.type.startsWith('image/') ? (
-                      <div className="w-10 h-10 bg-blue-900/30 rounded flex items-center justify-center">
-                        <span className="text-blue-400">🖼️</span>
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center">
+                        <span className="text-white text-lg sm:text-xl">🖼️</span>
                       </div>
                     ) : fileObj.type === 'application/pdf' ? (
-                      <div className="w-10 h-10 bg-red-900/30 rounded flex items-center justify-center">
-                        <span className="text-red-400">📄</span>
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-red-500 to-rose-500 rounded-xl flex items-center justify-center">
+                        <span className="text-white text-lg sm:text-xl">📄</span>
                       </div>
                     ) : (
-                      <div className="w-10 h-10 bg-gray-700 rounded flex items-center justify-center">
-                        <span className="text-gray-400">📁</span>
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-gray-500 to-slate-500 rounded-xl flex items-center justify-center">
+                        <span className="text-white text-lg sm:text-xl">📁</span>
                       </div>
                     )}
                   </div>
-                  <div>
-                    <p className="font-medium text-white truncate max-w-xs">{fileObj.name}</p>
-                    <p className="text-sm text-gray-400">{(fileObj.size / 1024 / 1024).toFixed(2)} MB</p>
+                  <div className="truncate">
+                    <p className="font-bold text-white truncate max-w-[150px] sm:max-w-xs">{fileObj.name}</p>
+                    <p className="text-sm text-white/80">{(fileObj.size / 1024 / 1024).toFixed(2)} MB</p>
                   </div>
                 </div>
 
-                <div className="flex items-center space-x-3">
+                <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-3 w-full sm:w-auto">
                   {uploadProgress[fileObj.id] > 0 && uploadProgress[fileObj.id] < 100 && (
-                    <div className="w-32">
-                      <div className="w-full bg-gray-700 rounded-full h-2">
+                    <div className="w-full sm:w-32">
+                      <div className="w-full bg-white/30 rounded-full h-2.5">
                         <div
-                          className="bg-gradient-to-r from-[#6C63FF] to-[#9B5DE5] h-2 rounded-full transition-all duration-300"
+                          className="bg-gradient-to-r from-[#ff6b81] to-[#6b5bff] h-2.5 rounded-full transition-all duration-300"
                           style={{ width: `${uploadProgress[fileObj.id]}%` }}
                         ></div>
                       </div>
-                      <p className="text-xs text-gray-400 mt-1 text-right">{Math.round(uploadProgress[fileObj.id])}%</p>
+                      <p className="text-xs text-white/80 mt-1 text-right">{Math.round(uploadProgress[fileObj.id])}%</p>
                     </div>
                   )}
 
@@ -242,26 +242,26 @@ export default function UploadPage() {
                     <>
                       <button
                         onClick={() => handleFileUpload(fileObj.id)}
-                        className="btn-primary text-sm px-4 py-2"
+                        className="btn-primary text-sm sm:text-base font-bold px-4 py-2 sm:px-6 sm:py-2.5 hover-lift w-full sm:w-auto"
                       >
-                        Encrypt
+                        Encrypt 🔐
                       </button>
                       <button
                         onClick={() => removeFile(fileObj.id)}
-                        className="btn-secondary text-sm px-4 py-2"
+                        className="btn-secondary text-sm sm:text-base font-bold px-4 py-2 sm:px-6 sm:py-2.5 hover-lift w-full sm:w-auto"
                       >
-                        Remove
+                        Remove 🗑️
                       </button>
                     </>
                   ) : uploading[fileObj.id] ? (
                     <button
                       disabled
-                      className="btn-primary text-sm px-4 py-2 opacity-70"
+                      className="btn-primary text-sm sm:text-base font-bold px-4 py-2 sm:px-6 sm:py-2.5 opacity-70 w-full sm:w-auto"
                     >
-                      Encrypting...
+                      Encrypting... 🔓
                     </button>
                   ) : (
-                    <span className="text-green-400 text-sm">✓ Encrypted</span>
+                    <span className="text-green-400 text-sm sm:text-base font-bold w-full sm:w-auto text-center">✓ Encrypted ✅</span>
                   )}
                 </div>
               </div>

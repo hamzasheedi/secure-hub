@@ -45,18 +45,18 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-[#2c184a] to-[#1a0f3d] flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-4xl font-extrabold gradient-text">
+        <h2 className="mt-6 text-center text-4xl font-extrabold text-white">
           SecureVault 🔐
         </h2>
-        <p className="mt-2 text-center text-lg text-white/80">
+        <p className="mt-2 text-center text-lg text-white/95">
           A secure file encryption and decryption system
         </p>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-card py-8 px-4 shadow-xl sm:rounded-2xl sm:px-10 border border-white/30">
+        <div className="bg-[#1a0f3d]/30 backdrop-blur-lg py-8 px-4 shadow-xl sm:rounded-2xl sm:px-10 border border-white/20">
           {/* Tab Navigation */}
           <div className="flex justify-between mb-6">
             <button
