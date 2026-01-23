@@ -17,12 +17,15 @@ from .api.auth_routes import router as auth_router
 from .api.vault_routes import router as vault_router
 from .api.admin_routes import router as admin_router
 
+# Import settings to get dynamic configuration
+from .config.settings import settings
+
 app = FastAPI(title="SecureVault API", version="1.0.0")
 
 # Add CORS middleware to allow requests from the frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000", "http://localhost:3001", "http://127.0.0.1:3001"],
+    allow_origins=[settings.frontend_url],  # Dynamic frontend URL from environment
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
