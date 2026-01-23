@@ -7,7 +7,7 @@ from ..models.user import User
 from ..models.encrypted_file import EncryptedFile
 from ..models.vault import Vault
 from ..models.file_metadata import FileMetadata
-from ..utils.encryption_utils import encrypt_file, decrypt_file
+from ..utils.encryption_utils import encrypt_file, decrypt_file, decrypt_file_to_bytes
 from ..config.settings import settings
 
 
@@ -96,17 +96,17 @@ class VaultService:
 
         return encrypted_file
 
-    def decrypt_file(self, file_id: str, user_id: str, password: str) -> Optional[str]:
+    def decrypt_file(self, file_id: str, user_id: str, password: str) -> Optional[tuple]:
         """
         Decrypt a file from the user's vault.
-        
+
         Args:
             file_id: The ID of the file to decrypt
             user_id: The ID of the user requesting decryption
             password: Password to use for decryption
-            
+
         Returns:
-            Path to the decrypted file, or None if decryption failed
+            Tuple of (decrypted_data: bytes, original_filename: str), or None if decryption failed
         """
         # Verify the file belongs to the user
         encrypted_file = (
@@ -114,14 +114,23 @@ class VaultService:
             .filter(EncryptedFile.id == file_id, EncryptedFile.user_id == user_id)
             .first()
         )
-        
+
         if not encrypted_file:
             return None
 
-        # Decrypt the file
-        decrypted_file_path = decrypt_file(encrypted_file.encrypted_path, password)
-        
-        return decrypted_file_path
+        # Check if the encrypted file exists on disk
+        if not os.path.exists(encrypted_file.encrypted_path):
+            print(f"Encrypted file does not exist at path: {encrypted_file.encrypted_path}")
+            return None
+
+        # Decrypt the file and get the data
+        decrypted_data = decrypt_file_to_bytes(encrypted_file.encrypted_path, password)
+
+        if decrypted_data is None:
+            print(f"Failed to decrypt file: {encrypted_file.encrypted_path}")
+            return None
+
+        return decrypted_data, encrypted_file.original_filename
 
     def list_user_files(self, user_id: str) -> List[EncryptedFile]:
         """

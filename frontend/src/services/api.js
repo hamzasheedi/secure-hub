@@ -1,172 +1,258 @@
+// frontend/src/services/api.js
+
+// Base API URL - can be configured via environment variable
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
+
 /**
- * @file frontend/src/services/api.js
- * @description API service for communicating with SecureVault backend
+ * Generic API request function with error handling
  */
+export const apiRequest = async (endpoint, options = {}) => {
+  const url = `${API_BASE_URL}${endpoint}`;
+  
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
+    ...options,
+  };
 
-class ApiService {
-  constructor(baseURL) {
-    this.baseURL = baseURL || process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
-  }
-
-  /**
-   * Set authentication token for subsequent requests
-   */
-  setAuthToken(token) {
-    if (token) {
-      this.authToken = `Bearer ${token}`;
-    } else {
-      delete this.authToken;
+  // Add authorization header if token is available
+  if (typeof window !== 'undefined') {
+    const token = localStorage.getItem('token');
+    if (token && !config.headers.Authorization) {
+      config.headers.Authorization = `Bearer ${token}`;
     }
   }
 
-  /**
-   * Make an API request
-   */
-  async request(endpoint, options = {}) {
-    const url = `${this.baseURL}${endpoint}`;
+  try {
+    const response = await fetch(url, config);
     
+    // If response is not OK, try to parse error details
+    if (!response.ok) {
+      let errorMessage = `HTTP error! status: ${response.status}`;
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.detail || errorData.message || errorMessage;
+      } catch (e) {
+        // If we can't parse the error, use the status text
+        errorMessage = response.statusText || errorMessage;
+      }
+      throw new Error(errorMessage);
+    }
+    
+    // For successful responses, try to parse JSON
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      return await response.json();
+    } else {
+      // For non-JSON responses (e.g., file downloads), return the response object
+      return response;
+    }
+  } catch (error) {
+    console.error(`API request failed: ${endpoint}`, error);
+    throw error;
+  }
+};
+
+/**
+ * Authentication API functions
+ */
+export const authAPI = {
+  login: (credentials) => 
+    apiRequest('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify(credentials),
+    }),
+
+  register: (userData) => 
+    apiRequest('/auth/register', {
+      method: 'POST',
+      body: JSON.stringify(userData),
+    }),
+
+  logout: () => 
+    apiRequest('/auth/logout', {
+      method: 'POST',
+    }),
+
+  deleteAccount: () => 
+    apiRequest('/auth/account', {
+      method: 'DELETE',
+    }),
+};
+
+/**
+ * Vault API functions
+ */
+export const vaultAPI = {
+  encryptFile: async (file, password) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('password', password);
+
+    // For multipart requests, we need to remove Content-Type header
+    // so the browser can set it with the correct boundary
+    return apiRequest('/vault/encrypt', {
+      method: 'POST',
+      body: formData,
+      headers: {}, // This will be handled by fetch automatically for FormData
+    });
+  },
+
+  decryptFile: async (fileId, password) => {
+    const url = `${API_BASE_URL}/vault/decrypt/${fileId}`;
+
     const config = {
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        ...(this.authToken && { 'Authorization': this.authToken }),
-        ...options.headers,
       },
-      ...options,
+      body: JSON.stringify({ password }),
     };
+
+    // Add authorization header if token is available
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('token');
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    }
 
     try {
       const response = await fetch(url, config);
-      
+
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.detail || `HTTP error! status: ${response.status}`);
+        let errorMessage = `HTTP error! status: ${response.status}`;
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.detail || errorData.message || errorMessage;
+        } catch (e) {
+          // If we can't parse the error, use the status text
+          errorMessage = response.statusText || errorMessage;
+        }
+        throw new Error(errorMessage);
       }
-      
-      return await response.json();
+
+      // Return the response object directly for file downloads
+      return response;
     } catch (error) {
-      console.error(`API request failed: ${endpoint}`, error);
+      console.error(`API request failed: /vault/decrypt/${fileId}`, error);
       throw error;
     }
-  }
+  },
 
-  /**
-   * Upload and encrypt a file
-   */
-  async uploadAndEncrypt(file, password) {
-    const formData = new FormData();
-    formData.append('file', file);
-    // In a real implementation, password would be sent securely
-    // For now, we're using a placeholder approach
-    
-    const response = await fetch(`${this.baseURL}/vault/encrypt`, {
-      method: 'POST',
+  listFiles: () => 
+    apiRequest('/vault/files'),
+
+  deleteFile: (fileId) =>
+    apiRequest(`/vault/file/${fileId}`, {
+      method: 'DELETE',
+    }),
+
+  downloadEncryptedFile: async (fileId) => {
+    const url = `${API_BASE_URL}/vault/download-encrypted/${fileId}`;
+
+    const config = {
+      method: 'GET',
       headers: {
-        // Don't include Content-Type header when using FormData
-        // The browser will set it with the correct boundary
-        'Authorization': this.authToken,
+        'Content-Type': 'application/json',
       },
-      body: formData,
-    });
+    };
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.detail || `HTTP error! status: ${response.status}`);
+    // Add authorization header if token is available
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('token');
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
     }
 
-    return await response.json();
-  }
+    try {
+      const response = await fetch(url, config);
 
-  /**
-   * Get user's encrypted files
-   */
-  async getUserFiles() {
-    return this.request('/vault/files');
-  }
+      if (!response.ok) {
+        let errorMessage = `HTTP error! status: ${response.status}`;
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.detail || errorData.message || errorMessage;
+        } catch (e) {
+          // If we can't parse the error, use the status text
+          errorMessage = response.statusText || errorMessage;
+        }
+        throw new Error(errorMessage);
+      }
 
-  /**
-   * Decrypt a file
-   */
-  async decryptFile(fileId) {
-    // This would typically return a file download
-    return this.request(`/vault/decrypt/${fileId}`, {
+      // Return the response object directly for file downloads
+      return response;
+    } catch (error) {
+      console.error(`API request failed: /vault/download-encrypted/${fileId}`, error);
+      throw error;
+    }
+  },
+
+  decryptLocalFile: async (file, password) => {
+    const url = `${API_BASE_URL}/vault/decrypt-local`;
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('password', password);
+
+    const config = {
       method: 'POST',
-    });
-  }
+      body: formData,
+      // Don't set Content-Type header for FormData, let browser set it with boundary
+    };
 
-  /**
-   * Delete a file
-   */
-  async deleteFile(fileId) {
-    return this.request(`/vault/file/${fileId}`, {
-      method: 'DELETE',
-    });
-  }
+    // Add authorization header if token is available
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('token');
+      if (token) {
+        config.headers = {
+          ...config.headers,
+          'Authorization': `Bearer ${token}`,
+        };
+      }
+    }
 
-  /**
-   * User registration
-   */
-  async register(username, password) {
-    return this.request('/auth/register', {
+    try {
+      const response = await fetch(url, config);
+
+      if (!response.ok) {
+        let errorMessage = `HTTP error! status: ${response.status}`;
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.detail || errorData.message || errorMessage;
+        } catch (e) {
+          // If we can't parse the error, use the status text
+          errorMessage = response.statusText || errorMessage;
+        }
+        throw new Error(errorMessage);
+      }
+
+      // Return the response object directly for file downloads
+      return response;
+    } catch (error) {
+      console.error(`API request failed: /vault/decrypt-local`, error);
+      throw error;
+    }
+  },
+};
+
+/**
+ * Admin API functions
+ */
+export const adminAPI = {
+  getUsers: () => 
+    apiRequest('/admin/users'),
+
+  activateUser: (userId) => 
+    apiRequest(`/admin/user/${userId}/activate`, {
       method: 'POST',
-      body: JSON.stringify({ username, password }),
-    });
-  }
+    }),
 
-  /**
-   * User login
-   */
-  async login(username, password) {
-    return this.request('/auth/login', {
+  deactivateUser: (userId) => 
+    apiRequest(`/admin/user/${userId}/deactivate`, {
       method: 'POST',
-      body: JSON.stringify({ username, password }),
-    });
-  }
-
-  /**
-   * User logout
-   */
-  async logout() {
-    return this.request('/auth/logout', {
-      method: 'POST',
-    });
-  }
-
-  /**
-   * Delete user account
-   */
-  async deleteAccount() {
-    return this.request('/auth/account', {
-      method: 'DELETE',
-    });
-  }
-
-  /**
-   * Get all users (admin only)
-   */
-  async getAllUsers() {
-    return this.request('/admin/users');
-  }
-
-  /**
-   * Deactivate a user (admin only)
-   */
-  async deactivateUser(userId) {
-    return this.request(`/admin/user/${userId}/deactivate`, {
-      method: 'POST',
-    });
-  }
-
-  /**
-   * Activate a user (admin only)
-   */
-  async activateUser(userId) {
-    return this.request(`/admin/user/${userId}/activate`, {
-      method: 'POST',
-    });
-  }
-}
-
-// Create a singleton instance
-const apiService = new ApiService();
-
-export default apiService;
+    }),
+};

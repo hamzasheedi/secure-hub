@@ -4,7 +4,7 @@ import secrets
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
-from typing import Tuple
+from typing import Tuple, Optional
 import base64
 
 
@@ -69,34 +69,73 @@ def encrypt_file(file_path: str, password: str) -> Tuple[str, str]:
 def decrypt_file(encrypted_file_path: str, password: str) -> str:
     """
     Decrypt a file using Fernet (AES) with a key derived from the password.
-    
+
     Args:
         encrypted_file_path: Path to the encrypted file
         password: Password to derive the decryption key from
-        
+
     Returns:
         Path to the decrypted file
     """
     # Read the encrypted file
     with open(encrypted_file_path, 'rb') as file:
         file_data = file.read()
-    
+
     # Extract salt (first 32 bytes) and encrypted data
     salt = file_data[:32]
     encrypted_data = file_data[32:]
-    
+
     # Derive decryption key from password
     key = derive_key_from_password(password, salt)
     fernet = Fernet(key)
-    
+
     # Decrypt the data
     decrypted_data = fernet.decrypt(encrypted_data)
-    
+
     # Create decrypted file path
     decrypted_file_path = encrypted_file_path.replace('.encrypted', '.decrypted')
-    
+
     # Write decrypted data
     with open(decrypted_file_path, 'wb') as file:
         file.write(decrypted_data)
-    
+
     return decrypted_file_path
+
+
+def decrypt_file_to_bytes(encrypted_file_path: str, password: str) -> Optional[bytes]:
+    """
+    Decrypt a file and return the decrypted data as bytes.
+
+    Args:
+        encrypted_file_path: Path to the encrypted file
+        password: Password to derive the decryption key from
+
+    Returns:
+        Decrypted data as bytes, or None if decryption failed
+    """
+    try:
+        # Read the encrypted file
+        with open(encrypted_file_path, 'rb') as file:
+            file_data = file.read()
+
+        # Check if file is large enough to contain salt
+        if len(file_data) < 32:
+            print(f"Encrypted file is too small to contain salt: {len(file_data)} bytes")
+            return None
+
+        # Extract salt (first 32 bytes) and encrypted data
+        salt = file_data[:32]
+        encrypted_data = file_data[32:]
+
+        # Derive decryption key from password
+        key = derive_key_from_password(password, salt)
+        fernet = Fernet(key)
+
+        # Decrypt the data
+        decrypted_data = fernet.decrypt(encrypted_data)
+
+        return decrypted_data
+    except Exception as e:
+        # Print the exception for debugging
+        print(f"Decryption failed with error: {str(e)}")
+        return None

@@ -17,4 +17,4 @@ class AuditLogEntry(Base):
     previous_hash = Column(String, nullable=True)  # For chain integrity
 
     # Relationship
-    user = relationship("User", back_populates="audit_logs")
+    user = relationship("User", back_populates="audit_logs", lazy="select")

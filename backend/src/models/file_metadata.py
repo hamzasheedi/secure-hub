@@ -17,4 +17,4 @@ class FileMetadata(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     # Relationship
-    encrypted_file = relationship("EncryptedFile", back_populates="metadata")
+    encrypted_file = relationship("EncryptedFile", back_populates="file_metadata", lazy="select")

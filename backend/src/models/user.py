@@ -1,11 +1,9 @@
-from sqlalchemy import Column, Integer, String, DateTime, Boolean, Enum as SQLEnum
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, String, DateTime, Enum as SQLEnum
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 from enum import Enum
 import uuid
-
-Base = declarative_base()
+from .base import Base
 
 
 class UserRole(str, Enum):
@@ -31,6 +29,6 @@ class User(Base):
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
     # Relationships
-    encrypted_files = relationship("EncryptedFile", order_by="EncryptedFile.id", back_populates="user")
-    vault = relationship("Vault", uselist=False, back_populates="user")
-    audit_logs = relationship("AuditLogEntry", order_by="AuditLogEntry.timestamp", back_populates="user")
+    encrypted_files = relationship("EncryptedFile", back_populates="user", lazy="select")
+    vault = relationship("Vault", uselist=False, back_populates="user", lazy="select")
+    audit_logs = relationship("AuditLogEntry", back_populates="user", lazy="select")
