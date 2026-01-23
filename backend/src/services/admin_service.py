@@ -2,12 +2,14 @@ from typing import List, Optional
 from sqlalchemy.orm import Session
 from ..models.user import User, UserRole, UserStatus
 from ..services.user_service import UserService
+from ..services.audit_log_service import AuditLogService
 
 
 class AdminService:
-    def __init__(self, db_session: Session, user_service: UserService):
+    def __init__(self, db_session: Session, user_service: UserService, audit_log_service: AuditLogService = None):
         self.db_session = db_session
         self.user_service = user_service
+        self.audit_log_service = audit_log_service
 
     def get_all_users(self) -> List[User]:
         """
@@ -63,11 +65,11 @@ class AdminService:
     def promote_to_admin(self, user_id: str, admin_user_id: str) -> bool:
         """
         Promote a user to admin role.
-        
+
         Args:
             user_id: The ID of the user to promote
             admin_user_id: The ID of the admin performing the action
-            
+
         Returns:
             True if the user was promoted, False otherwise
         """
@@ -75,26 +77,42 @@ class AdminService:
         admin_user = self.db_session.query(User).filter(User.id == admin_user_id).first()
         if not admin_user or admin_user.role != UserRole.ADMIN:
             return False
-        
+
         # Find the user to promote
         user = self.db_session.query(User).filter(User.id == user_id).first()
         if not user:
             return False
-        
+
+        # Check if user is already an admin
+        if user.role == UserRole.ADMIN:
+            return False
+
         # Promote the user
         user.role = UserRole.ADMIN
         self.db_session.commit()
-        
+
+        # Log the action if audit service is available
+        if self.audit_log_service:
+            self.audit_log_service.log_action(
+                user_id=admin_user_id,
+                action_type="USER_PROMOTE_TO_ADMIN",
+                result="success",
+                details={
+                    "target_user_id": user_id,
+                    "target_username": user.username
+                }
+            )
+
         return True
 
     def demote_from_admin(self, user_id: str, admin_user_id: str) -> bool:
         """
         Demote an admin user to regular user.
-        
+
         Args:
             user_id: The ID of the admin user to demote
             admin_user_id: The ID of the admin performing the action
-            
+
         Returns:
             True if the admin was demoted, False otherwise
         """
@@ -102,18 +120,30 @@ class AdminService:
         admin_user = self.db_session.query(User).filter(User.id == admin_user_id).first()
         if not admin_user or admin_user.role != UserRole.ADMIN:
             return False
-        
+
         # Prevent demotion of oneself
         if admin_user_id == user_id:
             return False  # Admins cannot demote themselves
-        
+
         # Find the admin to demote
         admin_to_demote = self.db_session.query(User).filter(User.id == user_id).first()
         if not admin_to_demote or admin_to_demote.role != UserRole.ADMIN:
             return False
-        
+
         # Demote the admin
         admin_to_demote.role = UserRole.USER
         self.db_session.commit()
-        
+
+        # Log the action if audit service is available
+        if self.audit_log_service:
+            self.audit_log_service.log_action(
+                user_id=admin_user_id,
+                action_type="USER_DEMOTE_FROM_ADMIN",
+                result="success",
+                details={
+                    "target_user_id": user_id,
+                    "target_username": admin_to_demote.username
+                }
+            )
+
         return True

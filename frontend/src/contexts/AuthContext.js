@@ -29,8 +29,14 @@ export function AuthProvider({ children }) {
       const response = await authAPI.login({ username, password });
       const { access_token } = response;
 
-      // Store token and basic user info
-      const userData = { username, role: 'user' }; // We'll get more details later
+      // Decode the JWT token to get user information including role
+      const tokenPayload = JSON.parse(atob(access_token.split('.')[1]));
+      const userData = {
+        username,
+        role: tokenPayload.role || 'user'
+      };
+
+      // Store token and user info
       localStorage.setItem('token', access_token);
       localStorage.setItem('user', JSON.stringify(userData));
       setToken(access_token);
@@ -73,6 +79,7 @@ export function AuthProvider({ children }) {
   const value = {
     user,
     token,
+    loading,
     login,
     register,
     logout,

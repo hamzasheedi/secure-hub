@@ -2,20 +2,42 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Comic+Neue:wght@400;700&family=Fredoka+One&display=swap');
+
 :root {
-  --background-dark: #1E1E2F;
-  --card-bg: #2C2C3E;
-  --primary-gradient-start: #6C63FF;
-  --primary-gradient-end: #9B5DE5;
-  --text-main: #E0E0E0;
-  --text-header: #FFFFFF;
-  --success: #4CAF50;
-  --error: #FF5252;
+  --primary: #ff6b81;
+  --secondary: #6b5bff;
+  --accent: #ffcc00;
+  --accent-alt: #00ffe0;
+  --background-start-rgb: 25, 20, 30;
+  --background-end-rgb: 30, 30, 47;
+  --text-main: #ffffff;
+  --text-secondary: #e0e0e0;
 }
 
 body {
   color: var(--text-main);
-  background-color: var(--background-dark);
+  background: linear-gradient(135deg, var(--primary), var(--secondary)) fixed;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--secondary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
 }
 
 @layer utilities {
@@ -24,22 +46,30 @@ body {
   }
 
   .bg-card {
-    @apply bg-[#2C2C3E];
+    @apply bg-white/10 backdrop-blur-lg rounded-2xl p-6 shadow-xl border border-white/20;
   }
 
   .btn-primary {
-    @apply bg-gradient-to-r from-[#6C63FF] to-[#9B5DE5] hover:from-[#5C53EF] hover:to-[#8B4DD5] text-white font-medium py-2 px-4 rounded-md transition-all duration-200;
+    @apply bg-gradient-to-r from-[#ff6b81] to-[#6b5bff] text-white font-bold py-3 px-6 rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300 ease-in-out;
   }
 
   .btn-secondary {
-    @apply bg-gray-700 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-md transition-all duration-200;
+    @apply bg-gradient-to-r from-[#ffcc00] to-[#00ffe0] text-gray-900 font-bold py-3 px-6 rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300 ease-in-out;
   }
 
   .btn-danger {
-    @apply bg-[#FF5252] hover:bg-[#FF4141] text-white font-medium py-2 px-4 rounded-md transition-all duration-200;
+    @apply bg-gradient-to-r from-[#ff4136] to-[#e63946] text-white font-bold py-3 px-6 rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300 ease-in-out;
   }
 
   .btn-success {
-    @apply bg-[#4CAF50] hover:bg-[#43A047] text-white font-medium py-2 px-4 rounded-md transition-all duration-200;
+    @apply bg-gradient-to-r from-[#2ecc71] to-[#27ae60] text-white font-bold py-3 px-6 rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300 ease-in-out;
+  }
+
+  .hover-lift {
+    @apply transition-transform duration-300 ease-in-out hover:scale-105;
+  }
+
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-[#ff6b81] to-[#6b5bff];
   }
 }

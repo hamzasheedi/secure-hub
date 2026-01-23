@@ -10,7 +10,8 @@ export default function Sidebar() {
 
   const navItems = [
     { name: 'Vault', href: '/dashboard', icon: '📁' },
-    { name: 'Upload', href: '/dashboard/upload', icon: '⬆️' },
+    { name: 'Upload & Encrypt', href: '/dashboard/upload', icon: '⬆️' },
+    { name: 'Decrypt Local File', href: '/dashboard/local-decrypt', icon: '🔓' },
   ];
 
   // Add admin panel if user is admin

@@ -7,7 +7,7 @@ import Sidebar from './Sidebar';
 import Header from './Header';
 
 export default function DashboardLayout({ children }) {
-  const { token, user } = useAuth();
+  const { token, user, loading } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -25,6 +25,15 @@ export default function DashboardLayout({ children }) {
     return (
       <div className="flex justify-center items-center h-screen">
         <p>Redirecting...</p>
+      </div>
+    );
+  }
+
+  // Add loading state check
+  if (loading || !user) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <p>Loading user data...</p>
       </div>
     );
   }

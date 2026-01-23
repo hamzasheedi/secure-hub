@@ -209,3 +209,8 @@ QWEN.md
 .qwen/
 .specify/
 specs/
+
+# Admin-related temporary files
+admin_bootstrap.log
+admin_fix.log
+temp_admin_*.py

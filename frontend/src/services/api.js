@@ -243,16 +243,26 @@ export const vaultAPI = {
  * Admin API functions
  */
 export const adminAPI = {
-  getUsers: () => 
+  getUsers: () =>
     apiRequest('/admin/users'),
 
-  activateUser: (userId) => 
+  activateUser: (userId) =>
     apiRequest(`/admin/user/${userId}/activate`, {
       method: 'POST',
     }),
 
-  deactivateUser: (userId) => 
+  deactivateUser: (userId) =>
     apiRequest(`/admin/user/${userId}/deactivate`, {
+      method: 'POST',
+    }),
+
+  promoteUser: (userId) =>
+    apiRequest(`/admin/user/${userId}/promote`, {
+      method: 'POST',
+    }),
+
+  demoteUser: (userId) =>
+    apiRequest(`/admin/user/${userId}/demote`, {
       method: 'POST',
     }),
 };

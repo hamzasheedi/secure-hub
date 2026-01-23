@@ -44,10 +44,12 @@ def verify_admin(credentials: HTTPAuthorizationCredentials = Depends(security), 
 
 @router.get("/users", response_model=List[UserResponse])
 def get_all_users(current_user: User = Depends(verify_admin), db: Session = Depends(get_db)):
-    admin_service = AdminService(db, UserService(db))
-    
+    from ..services.audit_log_service import AuditLogService
+    audit_service = AuditLogService(db)
+    admin_service = AdminService(db, UserService(db), audit_service)
+
     users = admin_service.get_all_users()
-    
+
     response = []
     for user in users:
         response.append({
@@ -57,7 +59,7 @@ def get_all_users(current_user: User = Depends(verify_admin), db: Session = Depe
             "status": user.status.value,
             "created_at": user.created_at.isoformat() if user.created_at else ""
         })
-    
+
     return response
 
 
@@ -67,13 +69,15 @@ def deactivate_user(
     current_user: User = Depends(verify_admin),
     db: Session = Depends(get_db)
 ):
-    admin_service = AdminService(db, UserService(db))
-    
+    from ..services.audit_log_service import AuditLogService
+    audit_service = AuditLogService(db)
+    admin_service = AdminService(db, UserService(db), audit_service)
+
     success = admin_service.deactivate_user(user_id, current_user.id)
-    
+
     if not success:
         raise HTTPException(status_code=400, detail="Failed to deactivate user")
-    
+
     return {"message": "User deactivated successfully"}
 
 
@@ -83,11 +87,53 @@ def activate_user(
     current_user: User = Depends(verify_admin),
     db: Session = Depends(get_db)
 ):
-    admin_service = AdminService(db, UserService(db))
-    
+    from ..services.audit_log_service import AuditLogService
+    audit_service = AuditLogService(db)
+    admin_service = AdminService(db, UserService(db), audit_service)
+
     success = admin_service.activate_user(user_id, current_user.id)
-    
+
     if not success:
         raise HTTPException(status_code=400, detail="Failed to activate user")
-    
+
     return {"message": "User activated successfully"}
+
+
+@router.post("/user/{user_id}/promote")
+def promote_user(
+    user_id: str,
+    current_user: User = Depends(verify_admin),
+    db: Session = Depends(get_db)
+):
+    from ..services.audit_log_service import AuditLogService
+    audit_service = AuditLogService(db)
+    admin_service = AdminService(db, UserService(db), audit_service)
+
+    # Prevent self-promotion
+    if current_user.id == user_id:
+        raise HTTPException(status_code=400, detail="Cannot promote yourself")
+
+    success = admin_service.promote_to_admin(user_id, current_user.id)
+
+    if not success:
+        raise HTTPException(status_code=400, detail="Failed to promote user - user may not exist or already be an admin")
+
+    return {"message": "User promoted to admin successfully"}
+
+
+@router.post("/user/{user_id}/demote")
+def demote_user(
+    user_id: str,
+    current_user: User = Depends(verify_admin),
+    db: Session = Depends(get_db)
+):
+    from ..services.audit_log_service import AuditLogService
+    audit_service = AuditLogService(db)
+    admin_service = AdminService(db, UserService(db), audit_service)
+
+    success = admin_service.demote_from_admin(user_id, current_user.id)
+
+    if not success:
+        raise HTTPException(status_code=400, detail="Failed to demote admin - may be trying to demote yourself or user is not an admin")
+
+    return {"message": "Admin demoted to user successfully"}
