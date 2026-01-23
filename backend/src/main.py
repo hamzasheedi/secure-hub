@@ -23,9 +23,21 @@ from .config.settings import settings
 app = FastAPI(title="SecureVault API", version="1.0.0")
 
 # Add CORS middleware to allow requests from the frontend
+# Allow both the configured frontend URL and localhost for development
+allowed_origins = [settings.frontend_url]
+if settings.debug:
+    # In debug mode, also allow localhost for local development
+    allowed_origins.extend([
+        "http://localhost:3000",
+        "http://localhost:8000",
+        "http://127.0.0.1:3000",
+        "http://127.0.0.1:8000",
+        "https://securevault-ixu4.onrender.com"  # Also allow the frontend domain
+    ])
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[settings.frontend_url],  # Dynamic frontend URL from environment
+    allow_origins=allowed_origins,  # Multiple origins for flexibility
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

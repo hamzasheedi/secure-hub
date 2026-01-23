@@ -30,7 +30,7 @@ class Settings(BaseSettings):
     debug: bool = os.getenv("DEBUG", "True").lower() == "true"
 
     # Frontend URL for CORS
-    frontend_url: str = os.getenv("FRONTEND_URL", "http://localhost:3000")
+    frontend_url: str = os.getenv("FRONTEND_URL", "https://securevault-ixu4.onrender.com")
 
     class Config:
         env_file = ".env"

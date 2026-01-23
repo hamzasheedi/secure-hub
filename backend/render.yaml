@@ -17,4 +17,4 @@ services:
       - key: ENCRYPTION_KEY
         sync: false  # This will be set in the Render dashboard
       - key: FRONTEND_URL
-        value: https://your-frontend-domain.onrender.com  # Update with your frontend URL
+        value: https://securevault-ixu4.onrender.com  # SecureVault frontend URL

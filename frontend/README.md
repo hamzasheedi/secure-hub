@@ -32,14 +32,18 @@ Then, run the development server:
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [https://securevault-ixu4.onrender.com/](https://securevault-ixu4.onrender.com/) with your browser to see the result (default) or [http://localhost:3000](http://localhost:3000) during local development.
 
 ## Environment Variables
 
 Create a `.env.local` file in the root directory with the following:
 
 ```env
+# For local development
 NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
+
+# For production deployment, use the deployed backend
+# NEXT_PUBLIC_API_BASE_URL=https://securevault-backend.onrender.com
 ```
 
 ## Project Structure
@@ -67,7 +71,9 @@ The frontend communicates with the SecureVault backend API at `http://localhost:
 
 ## Running with the Backend
 
-To run the complete SecureVault application:
+### Local Development
+
+To run the complete SecureVault application locally:
 
 1. First, start the backend server:
    ```bash
@@ -80,7 +86,20 @@ To run the complete SecureVault application:
    npm run dev
    ```
 
-The backend will be available at `http://localhost:8000` and the frontend at `http://localhost:3000`.
+The backend will be available at `http://localhost:8000` and the frontend at `http://localhost:3000` during local development.
+
+### Production Deployment
+
+When deploying the frontend to production (e.g., to Vercel, Netlify, or Render):
+
+1. Set the `NEXT_PUBLIC_API_BASE_URL` environment variable to point to your deployed backend:
+   ```
+   NEXT_PUBLIC_API_BASE_URL=https://securevault-backend.onrender.com
+   ```
+
+2. Build and deploy your frontend application.
+
+The frontend will then be available at `https://securevault-ixu4.onrender.com/` (or your custom domain) and will connect to the backend at `https://securevault-backend.onrender.com`.
 
 ## Development Notes
 

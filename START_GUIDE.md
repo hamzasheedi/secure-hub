@@ -82,7 +82,7 @@ cp .env.example .env.local
 npm run dev
 ```
 
-The frontend will be available at `http://localhost:3000`
+The frontend will be available at `https://securevault-ixu4.onrender.com/` (default) or `http://localhost:3000` during local development
 
 ### 5. Create Admin Account
 
@@ -174,3 +174,23 @@ To reset the application state:
 - Regularly update dependencies
 - Monitor logs for suspicious activity
 - Follow the principle of least privilege for user accounts
+
+### 12. Deployment Configuration
+
+When deploying to production (especially when frontend and backend are on different domains):
+
+- **Frontend** is deployed at: `https://securevault-ixu4.onrender.com/`
+- **Backend** is deployed at: `https://securevault-backend.onrender.com/`
+- Ensure the frontend environment variable `NEXT_PUBLIC_API_BASE_URL` is set to the backend URL
+- The backend's `FRONTEND_URL` environment variable should be set to the frontend URL for proper CORS configuration
+
+### CORS Configuration Details
+
+The backend's CORS settings allow requests from:
+- The configured frontend domain (via `FRONTEND_URL` environment variable)
+- Additional development domains when `DEBUG=True`:
+  - `http://localhost:3000`
+  - `http://localhost:8000`
+  - `http://127.0.0.1:3000`
+  - `http://127.0.0.1:8000`
+  - `https://securevault-ixu4.onrender.com` (the frontend domain)

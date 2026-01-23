@@ -77,6 +77,8 @@ SecureVault is a modular, secure, and user-friendly file encryption and decrypti
    npm run dev
    ```
 
+The frontend will be available at `https://securevault-ixu4.onrender.com/` (default) or `http://localhost:3000` during local development.
+
 ## Usage
 
 The application provides a web-based interface for:
@@ -91,6 +93,25 @@ Once logged in, users can:
 - List encrypted files
 - Delete encrypted files
 - Delete their account
+
+## Deployment Configuration
+
+When both frontend and backend are deployed separately:
+
+- **Frontend** is deployed at: `https://securevault-ixu4.onrender.com/`
+- **Backend** is deployed at: `https://securevault-backend.onrender.com/`
+- The frontend environment variable `NEXT_PUBLIC_API_BASE_URL` must be set to the backend URL for proper API communication
+
+### CORS Configuration
+
+The backend is configured to allow requests from:
+- The configured frontend URL (via `FRONTEND_URL` environment variable)
+- Additional development origins when running in debug mode:
+  - `http://localhost:3000`
+  - `http://localhost:8000`
+  - `http://127.0.0.1:3000`
+  - `http://127.0.0.1:8000`
+  - `https://securevault-ixu4.onrender.com`
 
 ## Security Features
 
