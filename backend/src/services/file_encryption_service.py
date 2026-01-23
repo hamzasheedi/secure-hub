@@ -10,49 +10,51 @@ class FileEncryptionService:
         # Initialize any required resources
         pass
 
-    def encrypt_file(self, file_path: str, password: str) -> tuple[str, str]:
+    def encrypt_file(self, file_path: str, password: str, user_id: str = None) -> tuple[str, str]:
         """
         Encrypt a file using the provided password.
-        
+
         Args:
             file_path: Path to the file to encrypt
             password: Password to use for encryption
-            
+            user_id: ID of the user (optional, for organizing files in user-specific directories)
+
         Returns:
             A tuple containing the encrypted file path and algorithm version
         """
         # Validate file exists
         if not os.path.exists(file_path):
             raise FileNotFoundError(f"File does not exist: {file_path}")
-        
+
         # Check file size
         file_size = os.path.getsize(file_path)
         if file_size > settings.max_file_size:
             raise ValueError(f"File exceeds maximum size of {settings.max_file_size} bytes")
-        
+
         # Encrypt the file
-        encrypted_file_path, algorithm_version = encrypt_file(file_path, password)
-        
+        encrypted_file_path, algorithm_version = encrypt_file(file_path, password, user_id)
+
         return encrypted_file_path, algorithm_version
 
-    def decrypt_file(self, encrypted_file_path: str, password: str) -> Optional[str]:
+    def decrypt_file(self, encrypted_file_path: str, password: str, user_id: str = None) -> Optional[str]:
         """
         Decrypt a file using the provided password.
-        
+
         Args:
             encrypted_file_path: Path to the encrypted file
             password: Password to use for decryption
-            
+            user_id: ID of the user (optional, for organizing files in user-specific directories)
+
         Returns:
             Path to the decrypted file, or None if decryption failed
         """
         # Validate file exists
         if not os.path.exists(encrypted_file_path):
             raise FileNotFoundError(f"Encrypted file does not exist: {encrypted_file_path}")
-        
+
         # Decrypt the file
         try:
-            decrypted_file_path = decrypt_file(encrypted_file_path, password)
+            decrypted_file_path = decrypt_file(encrypted_file_path, password, user_id)
             return decrypted_file_path
         except Exception as e:
             # Log the error in a real implementation

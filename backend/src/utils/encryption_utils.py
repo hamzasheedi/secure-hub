@@ -1,11 +1,13 @@
 import os
 import hashlib
 import secrets
+import uuid
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from typing import Tuple, Optional
 import base64
+from ..config.settings import settings
 
 
 def generate_salt() -> bytes:
@@ -31,48 +33,59 @@ def derive_key_from_password(password: str, salt: bytes, iterations: int = 39000
     return base64.urlsafe_b64encode(key)
 
 
-def encrypt_file(file_path: str, password: str) -> Tuple[str, str]:
+def encrypt_file(file_path: str, password: str, user_id: str = None) -> Tuple[str, str]:
     """
     Encrypt a file using Fernet (AES) with a key derived from the password.
-    
+
     Args:
         file_path: Path to the file to encrypt
         password: Password to derive the encryption key from
-        
+        user_id: ID of the user (optional, for organizing files in user-specific directories)
+
     Returns:
         Tuple of (encrypted_file_path, algorithm_version)
     """
     # Generate salt for key derivation
     salt = generate_salt()
-    
+
     # Derive encryption key from password
     key = derive_key_from_password(password, salt)
     fernet = Fernet(key)
-    
+
     # Read the original file
     with open(file_path, 'rb') as file:
         file_data = file.read()
-    
+
     # Encrypt the data
     encrypted_data = fernet.encrypt(file_data)
-    
-    # Create encrypted file path
-    encrypted_file_path = file_path + '.encrypted'
-    
+
+    # Create encrypted file path using vault path from settings
+    filename = os.path.basename(file_path)
+    user_vault_path = os.path.join(settings.vaults_path, user_id) if user_id else settings.vaults_path
+
+    # Create the user's vault directory if it doesn't exist
+    os.makedirs(user_vault_path, exist_ok=True)
+
+    # Create encrypted file path with UUID to avoid conflicts
+    file_uuid = str(uuid.uuid4())
+    encrypted_filename = f"{file_uuid}_{filename}.encrypted"
+    encrypted_file_path = os.path.join(user_vault_path, encrypted_filename)
+
     # Write encrypted data with salt prepended
     with open(encrypted_file_path, 'wb') as file:
         file.write(salt + encrypted_data)
-    
+
     return encrypted_file_path, "AES-128-Fernet-PBKDF2"
 
 
-def decrypt_file(encrypted_file_path: str, password: str) -> str:
+def decrypt_file(encrypted_file_path: str, password: str, user_id: str = None) -> str:
     """
     Decrypt a file using Fernet (AES) with a key derived from the password.
 
     Args:
         encrypted_file_path: Path to the encrypted file
         password: Password to derive the decryption key from
+        user_id: ID of the user (optional, for organizing files in user-specific directories)
 
     Returns:
         Path to the decrypted file
@@ -92,8 +105,17 @@ def decrypt_file(encrypted_file_path: str, password: str) -> str:
     # Decrypt the data
     decrypted_data = fernet.decrypt(encrypted_data)
 
+    # Create decrypted file path using vault path from settings
+    user_vault_path = os.path.join(settings.vaults_path, user_id) if user_id else settings.vaults_path
+
+    # Create the user's vault directory if it doesn't exist
+    os.makedirs(user_vault_path, exist_ok=True)
+
     # Create decrypted file path
-    decrypted_file_path = encrypted_file_path.replace('.encrypted', '.decrypted')
+    original_filename = os.path.basename(encrypted_file_path).replace('.encrypted', '')
+    file_uuid = str(uuid.uuid4())
+    decrypted_filename = f"{file_uuid}_{original_filename}.decrypted"
+    decrypted_file_path = os.path.join(user_vault_path, decrypted_filename)
 
     # Write decrypted data
     with open(decrypted_file_path, 'wb') as file:

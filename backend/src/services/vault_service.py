@@ -66,7 +66,7 @@ class VaultService:
         self.create_vault(user_id)
 
         # Encrypt the file
-        encrypted_file_path, algorithm_version = encrypt_file(file_path, password)
+        encrypted_file_path, algorithm_version = encrypt_file(file_path, password, user_id)
 
         # Create encrypted file record
         encrypted_file = EncryptedFile(
