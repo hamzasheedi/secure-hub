@@ -6,6 +6,7 @@ from passlib.context import CryptContext
 from jose import JWTError, jwt
 from ..models.user import User, UserRole, UserStatus
 from ..utils.password_validator import validate_password_strength, validate_username
+from ..utils.password_utils import normalize_password
 from ..config.settings import settings
 
 
@@ -41,9 +42,12 @@ class UserService:
         existing_user = self.db_session.query(User).filter(User.username == username).first()
         if existing_user:
             raise ValueError("Username already exists")
-        
+
+        # Normalize password to comply with bcrypt 72-byte limit
+        normalized_password = normalize_password(password)
+
         # Hash the password
-        hashed_password = pwd_context.hash(password)
+        hashed_password = pwd_context.hash(normalized_password)
         
         # Create the user
         user = User(
@@ -73,13 +77,16 @@ class UserService:
             The authenticated User object, or None if authentication failed
         """
         user = self.db_session.query(User).filter(User.username == username).first()
-        
-        if not user or not pwd_context.verify(password, user.password_hash):
+
+        # Normalize password to comply with bcrypt 72-byte limit
+        normalized_password = normalize_password(password)
+
+        if not user or not pwd_context.verify(normalized_password, user.password_hash):
             return None
-        
+
         if user.status != UserStatus.ACTIVE:
             return None
-        
+
         return user
 
     def generate_access_token(self, user_id: str) -> str:

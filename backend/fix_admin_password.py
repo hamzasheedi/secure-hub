@@ -15,6 +15,7 @@ from sqlalchemy.orm import sessionmaker
 from passlib.context import CryptContext
 from src.models.user import User
 from src.config.settings import settings
+from src.utils.password_utils import normalize_password
 
 
 def fix_admin_password():
@@ -38,7 +39,11 @@ def fix_admin_password():
         
         # Hash the password using the same method as the application
         password = "admin123"  # The password we want to set
-        new_password_hash = pwd_context.hash(password)
+
+        # Normalize password to comply with bcrypt 72-byte limit
+        normalized_password = normalize_password(password)
+
+        new_password_hash = pwd_context.hash(normalized_password)
         
         # Update the admin user's password hash
         admin_user.password_hash = new_password_hash

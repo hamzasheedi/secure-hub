@@ -19,6 +19,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from src.models.user import User, UserRole
 from src.config.settings import settings
+from src.utils.password_utils import normalize_password
 
 
 def create_initial_admin():
@@ -48,8 +49,11 @@ def create_initial_admin():
 
         pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
+        # Normalize password to comply with bcrypt 72-byte limit
+        normalized_password = normalize_password(password)
+
         # Hash the password using the same method as the application
-        password_hash = pwd_context.hash(password)
+        password_hash = pwd_context.hash(normalized_password)
 
         # For bcrypt, we don't need a separate salt field as it's included in the hash
         salt = ""  # Empty since passlib handles salting internally
