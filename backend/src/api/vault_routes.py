@@ -45,8 +45,12 @@ async def encrypt_file(
             headers={"WWW-Authenticate": "Bearer"},
         )
 
+    # Create a temporary directory for uploads using the vault path
+    temp_dir = os.path.join(settings.vaults_path, "temp")
+    os.makedirs(temp_dir, exist_ok=True)
+
     # Save uploaded file temporarily
-    temp_file_path = f"temp_{user.id}_{file.filename}"
+    temp_file_path = os.path.join(temp_dir, f"temp_{user.id}_{file.filename}")
     with open(temp_file_path, "wb") as buffer:
         buffer.write(await file.read())
 
@@ -182,8 +186,12 @@ async def decrypt_local_file(
             headers={"WWW-Authenticate": "Bearer"},
         )
 
+    # Create a temporary directory for uploads using the vault path
+    temp_dir = os.path.join(settings.vaults_path, "temp")
+    os.makedirs(temp_dir, exist_ok=True)
+
     # Save uploaded encrypted file temporarily
-    temp_file_path = f"temp_decrypt_{user.id}_{file.filename}"
+    temp_file_path = os.path.join(temp_dir, f"temp_decrypt_{user.id}_{file.filename}")
     with open(temp_file_path, "wb") as buffer:
         buffer.write(await file.read())
 

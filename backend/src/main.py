@@ -20,6 +20,10 @@ from .api.admin_routes import router as admin_router
 # Import settings to get dynamic configuration
 from .config.settings import settings
 
+# Print vaults path for debugging - remove after verification
+print(f"VAULTS_PATH = {settings.vaults_path}")
+print(f"SECURE_DATA_PATH = {settings.secure_data_path}")
+
 app = FastAPI(title="SecureVault API", version="1.0.0")
 
 # Add CORS middleware to allow requests from the frontend
