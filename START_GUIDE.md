@@ -180,7 +180,7 @@ To reset the application state:
 When deploying to production (especially when frontend and backend are on different domains):
 
 - **Frontend** is deployed at: `https://securevault-ixu4.onrender.com/`
-- **Backend** is deployed at: `https://securevault-backend.onrender.com/`
+- **Backend** is deployed at: `https://secure-hub.onrender.com/`
 - Ensure the frontend environment variable `NEXT_PUBLIC_API_BASE_URL` is set to the backend URL
 - The backend's `FRONTEND_URL` environment variable should be set to the frontend URL for proper CORS configuration
 

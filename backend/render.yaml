@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: securevault-backend
+    name: secure-hub
     env: python
     region: frankfurt  # or your preferred region
     plan: starter

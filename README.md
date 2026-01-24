@@ -99,7 +99,7 @@ Once logged in, users can:
 When both frontend and backend are deployed separately:
 
 - **Frontend** is deployed at: `https://securevault-ixu4.onrender.com/`
-- **Backend** is deployed at: `https://securevault-backend.onrender.com/`
+- **Backend** is deployed at: `https://secure-hub.onrender.com/`
 - The frontend environment variable `NEXT_PUBLIC_API_BASE_URL` must be set to the backend URL for proper API communication
 
 ### CORS Configuration

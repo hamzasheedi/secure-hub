@@ -43,7 +43,7 @@ Create a `.env.local` file in the root directory with the following:
 NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
 
 # For production deployment, use the deployed backend
-# NEXT_PUBLIC_API_BASE_URL=https://securevault-backend.onrender.com
+# NEXT_PUBLIC_API_BASE_URL=https://secure-hub.onrender.com
 ```
 
 ## Project Structure
@@ -94,12 +94,12 @@ When deploying the frontend to production (e.g., to Vercel, Netlify, or Render):
 
 1. Set the `NEXT_PUBLIC_API_BASE_URL` environment variable to point to your deployed backend:
    ```
-   NEXT_PUBLIC_API_BASE_URL=https://securevault-backend.onrender.com
+   NEXT_PUBLIC_API_BASE_URL=https://secure-hub.onrender.com
    ```
 
 2. Build and deploy your frontend application.
 
-The frontend will then be available at `https://securevault-ixu4.onrender.com/` (or your custom domain) and will connect to the backend at `https://securevault-backend.onrender.com`.
+The frontend will then be available at `https://securevault-ixu4.onrender.com/` (or your custom domain) and will connect to the backend at `https://secure-hub.onrender.com`.
 
 ## Development Notes
 

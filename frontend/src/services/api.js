@@ -1,7 +1,7 @@
 // frontend/src/services/api.js
 
 // Base API URL - can be configured via environment variable
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://secure-hub.onrender.com';
 
 /**
  * Generic API request function with error handling
