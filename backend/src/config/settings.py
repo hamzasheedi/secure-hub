@@ -32,6 +32,12 @@ class Settings(BaseSettings):
     # Frontend URL for CORS
     frontend_url: str = os.getenv("FRONTEND_URL", "https://securevault-ixu4.onrender.com")
 
+    # Supabase settings
+    supabase_url: str = os.getenv("SUPABASE_URL", "")
+    supabase_key: str = os.getenv("SUPABASE_KEY", "")
+    bucket_name: str = os.getenv("BUCKET_NAME", "vaults")
+    use_supabase: str = os.getenv("USE_SUPABASE", "true")
+
     class Config:
         env_file = ".env"
         env_file_encoding = 'utf-8'

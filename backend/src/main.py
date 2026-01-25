@@ -27,17 +27,25 @@ print(f"SECURE_DATA_PATH = {settings.secure_data_path}")
 app = FastAPI(title="SecureVault API", version="1.0.0")
 
 # Add CORS middleware to allow requests from the frontend
-# Allow both the configured frontend URL and localhost for development
+# Allow both the configured frontend URL and common local development origins
 allowed_origins = [settings.frontend_url]
-if settings.debug:
-    # In debug mode, also allow localhost for local development
-    allowed_origins.extend([
-        "http://localhost:3000",
-        "http://localhost:8000",
-        "http://127.0.0.1:3000",
-        "http://127.0.0.1:8000",
-        "https://securevault-ixu4.onrender.com"  # Also allow the frontend domain
-    ])
+# Always allow common local development origins for development flexibility
+allowed_origins.extend([
+    "http://localhost:3000",  # Common React dev server
+    "http://localhost:8000",  # Common alternative
+    "http://127.0.0.1:3000", # IPv4 version
+    "http://127.0.0.1:8000", # IPv4 version
+    "https://securevault-ixu4.onrender.com"  # Also allow the frontend domain
+])
+
+# Additional origins for broader compatibility
+allowed_origins.extend([
+    "http://localhost:3001",  # Additional common ports
+    "http://localhost:3002",
+    "http://localhost:3003",
+    "http://localhost:3004",
+    "http://localhost:3005",
+])
 
 app.add_middleware(
     CORSMiddleware,

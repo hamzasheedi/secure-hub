@@ -1,16 +1,43 @@
+import os
+import tempfile
+import shutil
+from pathlib import Path
+from typing import Optional
+
 from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File, Form
 from fastapi.responses import StreamingResponse
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List
 from sqlalchemy.orm import Session
+# Supabase client is imported dynamically when needed to avoid import-time errors
+# from supabase import create_client, Client  # Commented out to avoid import issues
+from dotenv import load_dotenv
+
 from ..database import get_db
 from ..services.user_service import UserService
 from ..services.vault_service import VaultService
 from ..models.user import User
 from ..models.encrypted_file import EncryptedFile
 from ..config.settings import settings
-import os
+
+load_dotenv()
+
+
+# --- Supabase Configuration ---
+from ..config.settings import settings
+
+SUPABASE_URL = settings.supabase_url if settings.supabase_url else os.getenv("SUPABASE_URL", "")
+SUPABASE_KEY = settings.supabase_key if settings.supabase_key else os.getenv("SUPABASE_KEY", "")
+BUCKET_NAME = settings.bucket_name if settings.bucket_name else os.getenv("BUCKET_NAME", "vaults")
+USE_SUPABASE = (settings.use_supabase if settings.use_supabase else os.getenv("USE_SUPABASE", "true")).lower() == "true"
+
+# Initialize Supabase client lazily (only when needed)
+from typing import Any
+supabase: Optional[Any] = None  # Using Any to avoid import issues with Client type
+
+# --- Temporary directory (always writable on Render Free tier) ---
+TEMP_DIR = Path(tempfile.gettempdir())
 
 
 router = APIRouter()
@@ -36,8 +63,6 @@ async def encrypt_file(
     db: Session = Depends(get_db)
 ):
     user_service = UserService(db)
-    vault_service = VaultService(db)
-
     user = user_service.get_current_user(credentials.credentials)
     if not user:
         raise HTTPException(
@@ -46,42 +71,178 @@ async def encrypt_file(
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    # Create a temporary directory for uploads using the vault path
-    temp_dir = os.path.join(settings.vaults_path, "temp")
-    os.makedirs(temp_dir, exist_ok=True)
+    # Validate file size before processing (10MB limit)
+    MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB in bytes
 
-    # Save uploaded file temporarily
-    temp_file_path = os.path.join(temp_dir, f"temp_{user.id}_{file.filename}")
-    with open(temp_file_path, "wb") as buffer:
-        buffer.write(await file.read())
+    # Seek to end to get file size, then reset to beginning
+    file.file.seek(0, 2)  # Seek to end
+    file_size = file.file.tell()  # Get size
+    file.file.seek(0)  # Reset to beginning
 
-    try:
-        encrypted_file = vault_service.encrypt_and_store_file(
-            user.id, temp_file_path, password
+    if file_size > MAX_FILE_SIZE:
+        raise HTTPException(
+            status_code=413,
+            detail=f"File too large. Maximum size is {MAX_FILE_SIZE // (1024*1024)}MB"
         )
 
-        if not encrypted_file:
-            raise HTTPException(status_code=400, detail="File encryption failed")
+    # Check available disk space before creating temporary files
+    import shutil
+    total, used, free = shutil.disk_usage(TEMP_DIR)
+    # Estimate required space: original file + encrypted file + some buffer
+    estimated_required_space = file_size * 3 + (10 * 1024 * 1024)  # 3x file size + 10MB buffer
 
-        # Clean up temporary file
-        os.remove(temp_file_path)
+    if free < estimated_required_space:
+        raise HTTPException(
+            status_code=507,
+            detail="Insufficient disk space for file processing"
+        )
+
+    # Initialize file paths to None to ensure they exist in finally block
+    local_temp_path = None
+    encrypted_temp_path = None
+
+    # Paths for temporary storage using Render-compatible /tmp directory
+    local_temp_path = TEMP_DIR / f"raw_{user.id}_{file.filename}"
+    encrypted_temp_path = TEMP_DIR / f"enc_{user.id}_{file.filename}"
+
+    try:
+        # 1. Save uploaded file temporarily in /tmp (Render free tier writable path)
+        with local_temp_path.open("wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+
+        # 2. Encryption Logic
+        from ..utils.encryption_utils import generate_salt, derive_key_from_password
+        salt = generate_salt()
+
+        # Derive encryption key from password
+        key = derive_key_from_password(password, salt)
+        from cryptography.fernet import Fernet
+        fernet = Fernet(key)
+
+        # Read the original file
+        with open(local_temp_path, 'rb') as file_reader:
+            file_data = file_reader.read()
+
+        # Encrypt the data
+        encrypted_data = fernet.encrypt(file_data)
+
+        # Write encrypted data with salt prepended to our temp location
+        with open(encrypted_temp_path, 'wb') as file_writer:
+            file_writer.write(salt + encrypted_data)
+
+        # 3. Upload to Supabase (persistent storage) with error handling
+        if USE_SUPABASE and SUPABASE_URL and SUPABASE_KEY:
+            # Initialize Supabase client only when needed
+            supabase = None
+            try:
+                # Dynamically import the client to avoid import-time errors
+                from supabase import create_client
+                # Create client with only the required parameters to avoid proxy issues
+                supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+            except Exception as init_error:
+                # Handle any initialization errors including proxy argument issues
+                error_msg = str(init_error)
+                if "'proxy'" in error_msg or "unexpected keyword argument" in error_msg:
+                    print(f"Supabase client initialization failed due to version incompatibility: {init_error}")
+                    print("This is typically caused by httpx/supabase version conflicts.")
+                    print("The system will use /tmp storage as fallback.")
+                else:
+                    print(f"Failed to initialize Supabase client: {init_error}")
+
+                # Continue to fallback logic
+                supabase = None
+
+            if supabase:
+                try:
+                    with encrypted_temp_path.open("rb") as f_enc:
+                        file_data = f_enc.read()
+                        # Upload to Supabase with a path that includes user ID for organization
+                        response = supabase.storage.from_(BUCKET_NAME).upload(
+                            path=f"encrypted/{user.id}/{file.filename}",
+                            file=file_data,
+                            file_options={"content-type": "application/octet-stream"}
+                        )
+
+                    # Store metadata in our database
+                    from ..models.encrypted_file import EncryptedFile
+
+                    file_size = len(file_data)
+
+                    encrypted_file_record = EncryptedFile(
+                        user_id=user.id,
+                        original_filename=file.filename,
+                        file_size=file_size,
+                        encrypted_path=f"supabase:{BUCKET_NAME}/encrypted/{user.id}/{file.filename}",  # Reference to Supabase location
+                        algorithm_version="AES-128-Fernet-PBKDF2"
+                    )
+
+                    db.add(encrypted_file_record)
+                    db.commit()
+                    db.refresh(encrypted_file_record)
+
+                    return {
+                        "status": "success",
+                        "storage": "supabase",
+                        "file_id": encrypted_file_record.id,
+                        "original_name": encrypted_file_record.original_filename,
+                        "size": encrypted_file_record.file_size,
+                        "encrypted_at": encrypted_file_record.created_at.isoformat()
+                    }
+
+                except Exception as supabase_error:
+                    # Log the error and fall back to /tmp storage
+                    print(f"Supabase upload failed: {str(supabase_error)}. Falling back to /tmp storage.")
+
+                    # Continue to fallback logic below
+
+        # 4. Fallback to /tmp (ephemeral storage)
+        # Move the encrypted file to a final location in temp with user context
+        final_path = TEMP_DIR / f"final_{user.id}_{file.filename}"
+        shutil.move(str(encrypted_temp_path), str(final_path))
+
+        # Store metadata in our database
+        from ..models.encrypted_file import EncryptedFile
+        import os
+
+        file_size = os.path.getsize(final_path)
+
+        encrypted_file_record = EncryptedFile(
+            user_id=user.id,
+            original_filename=file.filename,
+            file_size=file_size,
+            encrypted_path=str(final_path),  # Local temp path
+            algorithm_version="AES-128-Fernet-PBKDF2"
+        )
+
+        db.add(encrypted_file_record)
+        db.commit()
+        db.refresh(encrypted_file_record)
 
         return {
-            "file_id": encrypted_file.id,
-            "original_name": encrypted_file.original_filename,
-            "size": encrypted_file.file_size,
-            "encrypted_at": encrypted_file.created_at.isoformat()
+            "status": "warning",
+            "storage": "ephemeral_tmp",
+            "message": "File saved to /tmp but will be deleted on next deploy/restart. Supabase upload failed, using fallback storage.",
+            "file_id": encrypted_file_record.id,
+            "original_name": encrypted_file_record.original_filename,
+            "size": encrypted_file_record.file_size,
+            "encrypted_at": encrypted_file_record.created_at.isoformat()
         }
-    except ValueError as e:
-        # Clean up temporary file in case of error
-        if os.path.exists(temp_file_path):
-            os.remove(temp_file_path)
-        raise HTTPException(status_code=400, detail=str(e))
+
+    except HTTPException:
+        # Re-raise HTTP exceptions as-is
+        raise
     except Exception as e:
-        # Clean up temporary file in case of error
-        if os.path.exists(temp_file_path):
-            os.remove(temp_file_path)
-        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"File processing failed: {str(e)}")
+
+    finally:
+        # Import os module locally to ensure it's available
+        import os
+        # Cleanup raw file
+        if local_temp_path and local_temp_path.exists():
+            os.remove(local_temp_path)
+        # Only remove encrypted file if it still exists (wasn't moved/uploaded)
+        if encrypted_temp_path and encrypted_temp_path.exists():
+            os.remove(encrypted_temp_path)
 
 
 class DecryptRequest(BaseModel):
