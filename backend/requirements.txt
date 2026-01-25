@@ -14,4 +14,4 @@ requests==2.32.5
 aiofiles==24.1.0
 PyJWT==2.9.0
 bcrypt==4.2.0
-websockets==10.4
+websockets>=13.0
