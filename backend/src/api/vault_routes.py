@@ -9,6 +9,7 @@ from ..services.user_service import UserService
 from ..services.vault_service import VaultService
 from ..models.user import User
 from ..models.encrypted_file import EncryptedFile
+from ..config.settings import settings
 import os
 
 
