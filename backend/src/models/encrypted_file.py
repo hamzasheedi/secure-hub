@@ -13,6 +13,7 @@ class EncryptedFile(Base):
     original_filename = Column(String, nullable=False)
     file_size = Column(Integer, nullable=False)
     encrypted_path = Column(String, nullable=False)
+    storage_location = Column(String, default="local", nullable=False)  # 'local' or 'supabase'
     encryption_timestamp = Column(DateTime(timezone=True), server_default=func.now())
     algorithm_version = Column(String, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())

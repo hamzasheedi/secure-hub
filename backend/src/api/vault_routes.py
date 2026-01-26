@@ -168,11 +168,13 @@ async def encrypt_file(
 
                     file_size = len(file_data)
 
+                    # Store the path in a format that's easier to parse later
                     encrypted_file_record = EncryptedFile(
                         user_id=user.id,
                         original_filename=file.filename,
                         file_size=file_size,
-                        encrypted_path=f"supabase:{BUCKET_NAME}/encrypted/{user.id}/{file.filename}",  # Reference to Supabase location
+                        encrypted_path=f"encrypted/{user.id}/{file.filename}",  # Just the path in Supabase bucket
+                        storage_location="supabase",  # Indicate where the file is stored
                         algorithm_version="AES-128-Fernet-PBKDF2"
                     )
 
@@ -211,6 +213,7 @@ async def encrypt_file(
             original_filename=file.filename,
             file_size=file_size,
             encrypted_path=str(final_path),  # Local temp path
+            storage_location="local",  # Indicate where the file is stored
             algorithm_version="AES-128-Fernet-PBKDF2"
         )
 
@@ -432,25 +435,66 @@ def download_encrypted_file(
     if not encrypted_file:
         raise HTTPException(status_code=404, detail="File not found or access denied")
 
-    # Check if the encrypted file exists on disk
-    if not os.path.exists(encrypted_file.encrypted_path):
-        raise HTTPException(status_code=404, detail="Encrypted file does not exist on disk")
+    # Check if the encrypted file is stored in Supabase
+    if encrypted_file.storage_location == "supabase":
+        # The encrypted_path is the path in the Supabase bucket
+        actual_path = encrypted_file.encrypted_path
 
-    # Create a generator to stream the encrypted file content
-    def iterfile():
-        with open(encrypted_file.encrypted_path, 'rb') as file:
-            yield from file
+        # Download the file from Supabase
+        try:
+            from supabase import create_client
+            from ..config.settings import settings
+            import tempfile
+            import os
 
-    # Return the encrypted file as a streaming response with a .enc extension
-    encrypted_filename = f"{encrypted_file.original_filename}.enc"
+            SUPABASE_URL = settings.supabase_url if settings.supabase_url else os.getenv("SUPABASE_URL", "")
+            SUPABASE_KEY = settings.supabase_key if settings.supabase_key else os.getenv("SUPABASE_KEY", "")
 
-    return StreamingResponse(
-        iterfile(),
-        media_type='application/octet-stream',
-        headers={
-            "Content-Disposition": f"attachment; filename*=UTF-8''{encrypted_filename}",
-        }
-    )
+            if not SUPABASE_URL or not SUPABASE_KEY:
+                raise HTTPException(status_code=500, detail="Supabase configuration not found")
+
+            supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+
+            # Download the file from Supabase
+            response = supabase.storage.from_(settings.bucket_name).download(actual_path)
+
+            # Create a generator to stream the downloaded content
+            def iterfile():
+                yield response
+
+            # Return the encrypted file as a streaming response with a .enc extension
+            encrypted_filename = f"{encrypted_file.original_filename}.enc"
+
+            return StreamingResponse(
+                iterfile(),
+                media_type='application/octet-stream',
+                headers={
+                    "Content-Disposition": f"attachment; filename*=UTF-8''{encrypted_filename}",
+                }
+            )
+        except Exception as e:
+            print(f"Error downloading from Supabase: {str(e)}")
+            raise HTTPException(status_code=404, detail="Encrypted file does not exist in storage")
+    else:
+        # Check if the encrypted file exists on disk (local storage)
+        if not os.path.exists(encrypted_file.encrypted_path):
+            raise HTTPException(status_code=404, detail="Encrypted file does not exist on disk")
+
+        # Create a generator to stream the encrypted file content
+        def iterfile():
+            with open(encrypted_file.encrypted_path, 'rb') as file:
+                yield from file
+
+        # Return the encrypted file as a streaming response with a .enc extension
+        encrypted_filename = f"{encrypted_file.original_filename}.enc"
+
+        return StreamingResponse(
+            iterfile(),
+            media_type='application/octet-stream',
+            headers={
+                "Content-Disposition": f"attachment; filename*=UTF-8''{encrypted_filename}",
+            }
+        )
 
 
 @router.delete("/file/{file_id}")
